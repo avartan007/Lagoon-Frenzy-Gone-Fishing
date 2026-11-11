@@ -1,0 +1,4478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Lagoon Frenzy: Gone Fishing — Open-Source Aquatic Tycoon</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100dvh;
+      background: radial-gradient(circle at center, #0e4a7b 0%, #041527 100%);
+      font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      overflow: hidden;
+      color: #ffffff;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overscroll-behavior: none;
+    }
+    .wood-frame {
+      background: linear-gradient(180deg, #d89b52 0%, #aa6e2b 48%, #7d4b14 100%);
+      border: 3px solid #4a2805;
+      box-shadow: inset 0 2px 3px rgba(255,255,255,0.45), 0 6px 16px rgba(0,0,0,0.65);
+    }
+    .wood-corner-arch {
+      background: linear-gradient(135deg, #d6984f 0%, #9e6322 55%, #6e400e 100%);
+      border: 4px solid #4a2805;
+      box-shadow: inset 0 2px 4px rgba(255,255,255,0.4), 0 6px 16px rgba(0,0,0,0.7);
+    }
+    .parchment {
+      background: linear-gradient(180deg, #fff8e7 0%, #f3dfb1 100%);
+      border: 2.5px solid #8c5d25;
+      color: #2c1804;
+      box-shadow: inset 0 0 10px rgba(140,93,37,0.22);
+    }
+    .glossy-blue-btn {
+      background: linear-gradient(180deg, #6bd0ff 0%, #1d8fff 46%, #005ce6 54%, #003d99 100%);
+      border: 2.5px solid #c88736;
+      box-shadow: inset 0 2px 2px rgba(255,255,255,0.75), 0 3px 6px rgba(0,0,0,0.55);
+      text-shadow: 0 1px 2px rgba(0,0,0,0.85);
+      color: #fff6a9;
+      letter-spacing: 0.01em;
+      transition: transform 0.1s ease, filter 0.15s ease;
+    }
+    .glossy-blue-btn:hover:not(:disabled) {
+      filter: brightness(1.12);
+      transform: translateY(-1px);
+    }
+    .glossy-blue-btn:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+    .glossy-blue-btn:disabled {
+      filter: grayscale(0.85) opacity(0.6);
+      cursor: not-allowed;
+    }
+    .glossy-green-btn {
+      background: linear-gradient(180deg, #a3f244 0%, #52b808 48%, #388500 52%, #245c00 100%);
+      border: 2.5px solid #c88736;
+      box-shadow: inset 0 2px 2px rgba(255,255,255,0.75), 0 3px 6px rgba(0,0,0,0.55);
+      text-shadow: 0 1px 2px rgba(0,0,0,0.85);
+      color: #ffffff;
+      letter-spacing: 0.01em;
+      transition: transform 0.1s ease, filter 0.15s ease;
+    }
+    .glossy-green-btn:hover:not(:disabled) {
+      filter: brightness(1.12);
+      transform: translateY(-1px);
+    }
+    .glossy-green-btn:disabled {
+      filter: grayscale(0.85) opacity(0.6);
+      cursor: not-allowed;
+    }
+    .glossy-amber-btn {
+      background: linear-gradient(180deg, #ffe066 0%, #f59f00 48%, #d97706 52%, #92400e 100%);
+      border: 2.5px solid #5a330a;
+      box-shadow: inset 0 2px 2px rgba(255,255,255,0.75), 0 3px 6px rgba(0,0,0,0.55);
+      text-shadow: 0 1px 2px rgba(0,0,0,0.85);
+      color: #ffffff;
+      letter-spacing: 0.01em;
+      transition: transform 0.1s ease, filter 0.15s ease;
+    }
+    .glossy-amber-btn:hover:not(:disabled) {
+      filter: brightness(1.12);
+      transform: translateY(-1px);
+    }
+    .glossy-amber-btn:disabled {
+      filter: grayscale(0.85) opacity(0.6);
+      cursor: not-allowed;
+    }
+    /* Authentic Top-Left Circular Medallion & Ribbon */
+    .medallion-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: transform 0.12s ease, filter 0.12s ease;
+    }
+    .medallion-wrap:hover:not(.disabled) {
+      transform: translateY(-2px) scale(1.05);
+      filter: brightness(1.08);
+    }
+    .medallion-wrap:active:not(.disabled) {
+      transform: translateY(1px) scale(0.97);
+    }
+    .medallion-wrap.disabled {
+      filter: grayscale(0.85) opacity(0.6);
+      cursor: not-allowed;
+    }
+    .medallion-circle {
+      width: 50px;
+      height: 50px;
+      border-radius: 9999px;
+      background: radial-gradient(circle at 35% 30%, #7ce8ff 0%, #1692d9 58%, #07477a 100%);
+      border: 3.5px solid #d7dee8;
+      outline: 2.5px solid #6b4012;
+      box-shadow: inset 0 2px 4px rgba(255,255,255,0.75), 0 4px 8px rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .medallion-ribbon {
+      margin-top: -7px;
+      z-index: 2;
+      background: linear-gradient(180deg, #ffdf73 0%, #d99126 50%, #9c5b0c 100%);
+      border: 1.5px solid #4a2805;
+      border-radius: 9999px;
+      padding: 1px 7px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #ffffff;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.95);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.55);
+      white-space: nowrap;
+      line-height: 1.25;
+    }
+    /* Coin Box in Top-Right */
+    .coin-counter-box {
+      background: linear-gradient(180deg, #09458a 0%, #0d62b8 50%, #063166 100%);
+      border: 3px solid #c88736;
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.7), 0 2px 4px rgba(0,0,0,0.5);
+    }
+    /* Original Open-Source 3D Game Crest */
+    .title-logo-aqua {
+      background: linear-gradient(180deg, #ffffff 0%, #7ce8ff 45%, #0284c7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 3px 0 #052e52) drop-shadow(0 5px 8px rgba(0,0,0,0.75));
+    }
+    .title-logo-gold {
+      background: linear-gradient(180deg, #fff9c2 0%, #facc15 48%, #ca8a04 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 2px 0 #451a03) drop-shadow(0 4px 6px rgba(0,0,0,0.8));
+    }
+    @keyframes pulseFrenzy {
+      0%, 100% { transform: scale(1); filter: brightness(1); }
+      50% { transform: scale(1.06); filter: brightness(1.22); }
+    }
+    .frenzy-ready-glow {
+      animation: pulseFrenzy 1.1s infinite ease-in-out;
+    }
+    canvas {
+      display: block;
+      touch-action: none;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #a86c29;
+      border-radius: 3px;
+    }
+
+    /* Mobile & iPad Adaptive Scaling so HUD never overlaps Pond */
+    @media (max-width: 1024px) {
+      .medallion-circle {
+        width: 44px;
+        height: 44px;
+      }
+      .medallion-ribbon {
+        font-size: 10px;
+        padding: 1px 6px;
+      }
+    }
+    @media (max-width: 767px) {
+      .medallion-circle {
+        width: 38px;
+        height: 38px;
+      }
+      .medallion-ribbon {
+        font-size: 9px;
+        padding: 0.5px 5px;
+      }
+      #pondTopHud {
+        padding: 4px 6px !important;
+        gap: 4px !important;
+      }
+      #pondBottomHud {
+        padding: 2px 4px 4px 4px !important;
+        gap: 4px !important;
+      }
+    }
+  </style>
+</head>
+<body class="w-screen h-[100dvh] flex flex-col items-center justify-center overflow-hidden">
+
+  <!-- MAIN APP CONTAINER -->
+  <div id="appRoot" class="relative w-full h-full max-w-[1280px] max-h-[820px] flex flex-col justify-between overflow-hidden shadow-2xl border-2 sm:border-4 border-[#5c340b] bg-[#0a385c]">
+
+    <!-- CENTER INTERACTIVE CANVAS + FLOATING AUTHENTIC HUD -->
+    <div id="canvasWrapper" class="relative flex-1 w-full h-full overflow-hidden bg-[#0c4a73]">
+      <canvas id="gameCanvas" class="w-full h-full cursor-pointer"></canvas>
+
+      <!-- FLOATING TOAST BANNER -->
+      <div id="toastBanner" class="pointer-events-none absolute top-20 left-1/2 -translate-x-1/2 z-30 transition-all duration-300 opacity-0 -translate-y-2 bg-[#2b1704]/95 border-2 border-[#ffd452] text-[#fff8cc] px-4 py-1.5 rounded-full text-xs sm:text-sm font-bold shadow-2xl tracking-normal whitespace-nowrap max-w-[92vw] truncate">
+        Welcome to Lagoon Frenzy: Gone Fishing!
+      </div>
+
+      <!-- ============================================================== -->
+      <!-- AUTHENTIC TOP POND HUD (Floating Top-Left Medallions & Top-Right Coin/Vista Frame) -->
+      <!-- ============================================================== -->
+      <div id="pondTopHud" class="hidden pointer-events-none absolute top-0 left-0 right-0 z-20 flex flex-wrap lg:flex-nowrap items-start justify-between p-1.5 sm:p-2.5 gap-1.5 sm:gap-2">
+        
+        <!-- Top-Left: 6 Circular Animal Medallions with Price Ribbons + Quick Feed & Golden Frenzy Pills -->
+        <div class="pointer-events-auto flex items-center gap-1.5 sm:gap-2 max-w-full overflow-x-auto pb-0.5">
+          <div id="animalBuyBar" class="flex items-center gap-1 sm:gap-1.5 px-2 py-1 rounded-2xl bg-[#3d2105]/65 backdrop-blur-[2px] border border-[#a86c29]/70">
+            <!-- Populated dynamically by JS with 3D sprites & ribbons -->
+          </div>
+
+          <!-- Quick Pellet, Mackerel & Golden Fever Frenzy Buttons -->
+          <div class="flex flex-col gap-1 shrink-0">
+            <div class="flex items-center gap-1">
+              <button id="btnPelletWell" class="glossy-green-btn px-2.5 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-extrabold flex items-center gap-1 shadow-md whitespace-nowrap" title="Scatter Fish Pellets in Pond ($5) [Spacebar]">
+                <span>🌾</span> <span>Feed Pond ($5)</span>
+              </button>
+              <button id="btnTriggerFrenzy" class="glossy-amber-btn px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-extrabold flex items-center gap-1 shadow-md whitespace-nowrap" title="Activate 2x Golden Fever Frenzy when charged! [F Key]">
+                <span>⚡</span> <span id="frenzyBtnLabel">Frenzy 0%</span>
+              </button>
+            </div>
+            <button id="btnDolphinMackerel" class="glossy-blue-btn px-2.5 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-extrabold flex items-center gap-1 shadow-md whitespace-nowrap" title="Toss Mackerel for Dolphins ($60) [M Key]">
+              <span>🐟</span> <span>Mackerel ($60)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Top-Right: Authentic Wooden Frame with Blue Coin Counter + Coastal Vista Banner + Save/Ambience/Fullscreen -->
+        <div class="pointer-events-auto wood-frame rounded-2xl p-1 sm:p-1.5 flex items-center gap-1 sm:gap-1.5 shadow-2xl ml-auto">
+          <!-- Glossy Blue Coin Box -->
+          <div class="coin-counter-box px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-xl flex items-center gap-1.5 min-w-[96px] sm:min-w-[132px] justify-between">
+            <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-gradient-to-b from-[#fff078] via-[#f59f00] to-[#b45309] border-2 border-[#fff9bf] shadow flex items-center justify-center text-[11px] sm:text-xs font-black text-[#5c2d04]">
+              $
+            </div>
+            <span id="hudCoins" class="text-sm sm:text-xl font-extrabold tracking-wide text-[#ffef7a] drop-shadow-[0_2px_2px_rgba(0,0,0,0.9)]">220</span>
+          </div>
+
+          <!-- Sunny Coastal Vista Mini-Banner with Quick Controls -->
+          <div class="relative h-9 sm:h-11 px-1.5 sm:px-2 rounded-xl border-2 border-[#5a330a] bg-cover bg-center flex items-center gap-1 sm:gap-1.5 overflow-hidden" style="background-image: linear-gradient(90deg, rgba(4,34,66,0.25) 0%, rgba(4,34,66,0.55) 100%), url('assets/hud_vista.jpg');">
+            <button id="btnAudioToggle" class="glossy-blue-btn w-7 h-7 rounded-lg text-xs font-bold flex items-center justify-center" title="Toggle Sound & Music">
+              🔊
+            </button>
+            <button id="btnAmbienceToggle" class="glossy-amber-btn px-1.5 sm:px-2 py-1 rounded-lg text-[11px] sm:text-xs font-extrabold" title="Cycle Lagoon Time of Day (Sunny Day / Golden Sunset / Bioluminescent Night)">
+              ☀️ Day
+            </button>
+            <button id="btnQuickSavePond" class="glossy-green-btn px-2 py-1 rounded-lg text-[11px] sm:text-xs font-extrabold" title="Save Checkpoint & Open Client-Side Save/Load Manager">
+              💾 Save
+            </button>
+            <button id="btnHudUpgrades" class="glossy-green-btn px-2 py-1 rounded-lg text-[11px] sm:text-xs font-extrabold" title="Upgrade Boat, Helicopter, Warehouse & Feeder">
+              🛠️ Upgrades
+            </button>
+            <button id="btnOpenGuide" class="glossy-blue-btn px-2 py-1 rounded-lg text-[11px] sm:text-xs font-extrabold" title="Aquatic Almanac & Factory Recipes">
+              📖 Guide
+            </button>
+            <button id="btnBackToMap" class="glossy-amber-btn px-2 py-1 rounded-lg text-[11px] sm:text-xs font-extrabold" title="Auto-Save & Return to Island Career Map">
+              🗺️ Map
+            </button>
+            <button id="btnFullscreenToggle" class="glossy-blue-btn w-7 h-7 rounded-lg text-xs font-extrabold flex items-center justify-center" title="Toggle Fullscreen Mode (Mobile / iPad / Desktop)">
+              ⛶
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================================== -->
+      <!-- AUTHENTIC BOTTOM POND HUD (Bottom-Left Menu Arch, Center Pier Boat/Warehouse/Heli + Direct Upgrade Pills, Bottom-Right Parchment Goals & Timer) -->
+      <!-- ============================================================== -->
+      <div id="pondBottomHud" class="hidden pointer-events-none absolute bottom-0 left-0 right-0 z-20 flex items-end justify-between px-1.5 sm:px-2 pb-1 sm:pb-1.5 pt-1 gap-1.5 sm:gap-2">
+        
+        <!-- Bottom-Left: Curved Wooden Corner Arch with Glossy Blue Menu, Pause & Save Status -->
+        <div class="pointer-events-auto wood-corner-arch rounded-tr-3xl rounded-tl-xl rounded-bl-xl px-2.5 sm:px-3.5 py-2 flex flex-col items-center gap-1 min-w-[94px] sm:min-w-[114px]">
+          <button id="btnPondMenu" class="glossy-blue-btn w-full px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-extrabold tracking-wide">
+            ☰ Menu
+          </button>
+          <button id="btnPauseGame" class="px-2.5 sm:px-3 py-0.5 rounded-full bg-[#4a2805] border border-[#c88736] text-[10px] sm:text-[11px] font-bold text-[#ffebb3] hover:brightness-110">
+            ⏸️ Pause
+          </button>
+          <span id="hudAutoSaveBadge" class="text-[9px] sm:text-[10px] font-extrabold text-[#bbf7d0] tracking-tight whitespace-nowrap">
+            💾 Auto-Saved
+          </span>
+        </div>
+
+        <!-- Bottom-Center Wooden Pier Dock: Speedboat (Left) + Bamboo Warehouse Shed (Center) + Helicopter (Right) -->
+        <div class="pointer-events-auto flex items-end justify-center gap-1.5 sm:gap-3 pb-0.5 overflow-x-auto max-w-[62vw] sm:max-w-none">
+          
+          <!-- 1. Speedboat on Water (Left of Pier) + Direct In-Level Upgrade Button -->
+          <div class="flex flex-col items-center gap-0.5 sm:gap-1 shrink-0">
+            <div id="boatDockWidget" class="flex flex-col items-center group cursor-pointer" title="Click to Sell Warehouse Goods or Upgrade Speedboat">
+              <div class="relative w-16 h-11 sm:w-24 sm:h-15 flex items-center justify-center transition-transform group-hover:scale-105">
+                <img id="imgHudBoat" src="assets/spr_boat.png" alt="Speedboat" class="w-full h-full object-contain drop-shadow-[0_4px_6px_rgba(0,0,0,0.7)]" />
+                <span id="boatLevelBadge" class="absolute -top-1 left-0 px-1.5 py-0.2 rounded-full bg-[#0284c7] border border-[#fde047] text-[9px] sm:text-[10px] font-extrabold text-[#fff8dc] shadow">
+                  Lv.1
+                </span>
+                <span id="boatSailBadge" class="hidden absolute -top-1 right-0 px-1.5 py-0.2 rounded-full bg-emerald-600 border border-yellow-300 text-[9px] sm:text-[10px] font-extrabold text-white shadow">
+                  Sailing
+                </span>
+              </div>
+              <!-- Transit Progress Bar -->
+              <div id="boatProgressWrap" class="hidden w-20 sm:w-24 h-1.5 rounded-full bg-[#041e3a] border border-[#38bdf8] overflow-hidden mb-0.5">
+                <div id="boatProgressBar" class="h-full bg-gradient-to-r from-[#fde047] to-[#22c55e] transition-all duration-100" style="width: 0%;"></div>
+              </div>
+              <button id="btnBoatMarket" class="glossy-blue-btn -mt-1 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-extrabold flex items-center gap-1 shadow-lg whitespace-nowrap">
+                <span>🚤</span>
+                <span id="boatStatusText">Boat: Ready (Sell)</span>
+              </button>
+            </div>
+            <button id="btnQuickUpgBoat" class="glossy-amber-btn px-2 sm:px-2.5 py-0.5 rounded-full text-[9px] sm:text-[11px] font-extrabold shadow flex items-center gap-1 whitespace-nowrap" title="Upgrade Speedboat Speed & Market Bonus">
+              <span>⬆️ Boat Lv.2 (250 🪙)</span>
+            </button>
+          </div>
+
+          <!-- 2. Bamboo Thatched-Roof Warehouse Shed (Center of Pier) + Direct Upgrade Button -->
+          <div class="flex flex-col items-center gap-0.5 sm:gap-1 shrink-0">
+            <div id="warehouseBar" class="flex flex-col items-center cursor-pointer group" title="Click to View & Sell Stored Warehouse Cargo">
+              <!-- Bamboo Shed Visual + Stored Items Rack Overlay -->
+              <div class="relative w-36 sm:w-56 h-17 sm:h-22 rounded-t-2xl rounded-b-lg bg-gradient-to-b from-[#7a4b1a]/95 to-[#492a0a]/95 border-3 border-[#c88736] shadow-2xl flex flex-col justify-between p-1 sm:p-1.5 overflow-hidden">
+                <!-- Thatched Roof Header Strip -->
+                <div class="flex items-center justify-between px-1.5 sm:px-2 py-0.5 rounded bg-[#a86c29] border border-[#f3dfb1]/50 text-[10px] sm:text-[11px] font-extrabold text-[#fff8dc]">
+                  <span class="flex items-center gap-1">
+                    <img src="assets/spr_warehouse.png" alt="Warehouse" class="w-3.5 h-3.5 sm:w-4 sm:h-4 object-contain" />
+                    <span id="warehouseTitleLabel">Pier Shed Lv.1</span>
+                  </span>
+                  <span id="warehouseCount" class="text-[#ffef7a]">0/15</span>
+                </div>
+
+                <!-- Visual Crate Slots Inside Shed -->
+                <div id="warehouseItemsList" class="flex items-center gap-1 overflow-x-auto py-0.5 px-1 min-h-[24px] sm:min-h-[28px]">
+                  <span class="text-[#e6c88a] text-[10px] sm:text-xs font-semibold italic mx-auto">Empty Shed — Collect Pond Drops!</span>
+                </div>
+
+                <!-- Green Capacity Progress Bar at Bottom of Shed -->
+                <div class="w-full h-2 sm:h-2.5 rounded-full bg-[#241302] border border-[#8c5d25] overflow-hidden p-0.5">
+                  <div id="warehouseCapFill" class="h-full rounded-full bg-gradient-to-r from-[#4ade80] to-[#16a34a] transition-all duration-200" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <button id="btnQuickUpgWarehouse" class="glossy-amber-btn px-2 sm:px-2.5 py-0.5 rounded-full text-[9px] sm:text-[11px] font-extrabold shadow flex items-center gap-1 whitespace-nowrap" title="Upgrade Pier Warehouse Storage Slots">
+              <span>⬆️ Shed Lv.2 (200 🪙)</span>
+            </button>
+          </div>
+
+          <!-- 3. Cargo Helicopter on Pier (Right of Pier) + Direct In-Level Upgrade Button -->
+          <div class="flex flex-col items-center gap-0.5 sm:gap-1 shrink-0">
+            <div id="heliDockWidget" class="flex flex-col items-center group cursor-pointer" title="Click to Import Butter, Jars, Gold Bars & Sushi Rice or Upgrade Helicopter">
+              <div class="relative w-16 h-11 sm:w-24 sm:h-15 flex items-center justify-center transition-transform group-hover:scale-105">
+                <img id="imgHudHeli" src="assets/spr_heli.png" alt="Helicopter" class="w-full h-full object-contain drop-shadow-[0_4px_6px_rgba(0,0,0,0.7)]" />
+                <span id="heliLevelBadge" class="absolute -top-1 left-0 px-1.5 py-0.2 rounded-full bg-[#0284c7] border border-[#fde047] text-[9px] sm:text-[10px] font-extrabold text-[#fff8dc] shadow">
+                  Lv.1
+                </span>
+                <span id="heliFlyBadge" class="hidden absolute -top-1 right-0 px-1.5 py-0.2 rounded-full bg-amber-600 border border-yellow-200 text-[9px] sm:text-[10px] font-extrabold text-white shadow">
+                  In Flight
+                </span>
+              </div>
+              <!-- Flight Progress Bar -->
+              <div id="heliProgressWrap" class="hidden w-20 sm:w-24 h-1.5 rounded-full bg-[#041e3a] border border-[#fde047] overflow-hidden mb-0.5">
+                <div id="heliProgressBar" class="h-full bg-gradient-to-r from-[#38bdf8] to-[#fde047] transition-all duration-100" style="width: 0%;"></div>
+              </div>
+              <button id="btnHelicopterImport" class="glossy-blue-btn -mt-1 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-extrabold flex items-center gap-1 shadow-lg whitespace-nowrap">
+                <span>🚁</span>
+                <span id="heliStatusText">Helicopter: Import</span>
+              </button>
+            </div>
+            <button id="btnQuickUpgHeli" class="glossy-amber-btn px-2 sm:px-2.5 py-0.5 rounded-full text-[9px] sm:text-[11px] font-extrabold shadow flex items-center gap-1 whitespace-nowrap" title="Upgrade Helicopter Rotor Speed & Bulk Discount">
+              <span>⬆️ Heli Lv.2 (220 🪙)</span>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Bottom-Right: Authentic Curved Wooden Frame with Parchment Level Goals & Timer -->
+        <div class="pointer-events-auto wood-corner-arch rounded-tl-3xl rounded-tr-xl rounded-br-xl p-1.5 sm:p-2 flex flex-col gap-1 sm:gap-1.5 min-w-[148px] sm:min-w-[215px] shadow-2xl">
+          <!-- Parchment Goals Card -->
+          <div class="parchment rounded-xl px-2 sm:px-2.5 py-1 sm:py-1.5 flex flex-col gap-1">
+            <div class="text-[9px] sm:text-[10px] uppercase tracking-wider font-extrabold text-[#6e420f] border-b border-[#c9a96e] pb-0.5 flex items-center justify-between">
+              <span>Level Goals</span>
+              <span id="hudLevelBadge" class="text-[#0369a1]">Lv.1</span>
+            </div>
+            <div id="hudGoalsList" class="grid grid-cols-2 gap-1 sm:gap-1.5 pt-0.5">
+              <!-- Populated by JS with crisp icons, fractions & green checkmarks -->
+            </div>
+          </div>
+
+          <!-- Timer & Gold Target Strip -->
+          <div class="flex items-center justify-between px-2 py-0.5 sm:py-1 rounded-xl bg-[#3d2105] border-2 border-[#a86c29]">
+            <div class="flex items-center gap-1">
+              <span class="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-amber-400 border border-white flex items-center justify-center text-[10px] sm:text-xs shadow">⏱️</span>
+              <span id="hudTimer" class="text-xs sm:text-base font-extrabold text-white tracking-tight">00:00</span>
+            </div>
+            <div class="px-1.5 sm:px-2 py-0.5 rounded-md bg-gradient-to-b from-[#f59f00] to-[#b45309] border border-[#fde047] text-[10px] sm:text-[11px] font-extrabold text-white flex items-center gap-1" title="Gold Medal Target Time">
+              <span>🥇</span>
+              <span id="hudGoldTarget">03:00</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ============================================================== -->
+      <!-- TITLE MENU OVERLAY (100% Original Copyright-Free Artwork + Custom Crest + Continue Saved Game) -->
+      <!-- ============================================================== -->
+      <div id="screenTitle" class="absolute inset-0 z-30 flex flex-col items-center justify-between p-3 sm:p-5 bg-cover bg-center overflow-y-auto" style="background-image: linear-gradient(180deg, rgba(4,24,46,0.12) 0%, rgba(4,24,46,0.28) 45%, rgba(4,24,46,0.78) 100%), url('assets/title_bg.jpg');">
+        
+        <!-- Top Bar + Original 3D Game Crest Banner -->
+        <div class="w-full flex flex-col items-center gap-1.5 shrink-0">
+          <div class="w-full flex items-center justify-between pointer-events-none">
+            <div class="px-3 py-1 rounded-full bg-[#06294d]/90 border border-[#7ce8ff]/60 text-[11px] sm:text-xs font-bold text-[#e0f2fe] shadow-lg">
+              📱 Mobile, iPad & Laptop Ready • 100% Client-Side Save
+            </div>
+            <div class="px-3 py-1 rounded-full bg-[#06294d]/90 border border-[#7ce8ff]/60 text-[11px] sm:text-xs font-bold text-[#e0f2fe] shadow-lg">
+              🎣 36-Island Open-Source Edition (MIT)
+            </div>
+          </div>
+
+          <!-- Original Copyright-Free Crest Banner -->
+          <div class="px-6 py-2 rounded-3xl bg-[#06294d]/75 backdrop-blur-xs border-2 border-[#fde047]/80 shadow-2xl text-center">
+            <div class="title-logo-aqua text-2xl sm:text-4xl font-black tracking-tight leading-none">
+              LAGOON FRENZY
+            </div>
+            <div class="title-logo-gold text-sm sm:text-xl font-extrabold tracking-widest uppercase mt-0.5">
+              ⚓ GONE FISHING • AQUATIC TYCOON ⚓
+            </div>
+          </div>
+        </div>
+
+        <!-- Wooden Signboard Center Box -->
+        <div class="wood-frame rounded-2xl p-3.5 sm:p-4 w-full max-w-md flex flex-col items-center gap-2.5 my-auto shadow-2xl">
+          <div class="px-5 py-1 rounded-lg bg-[#6e3f11] border-2 border-[#f3dfb1]/60 text-[#fff8dc] font-extrabold text-sm sm:text-base shadow">
+            Welcome Back, Captain!
+          </div>
+          <div class="parchment rounded-xl p-3 sm:p-3.5 w-full flex flex-col items-center gap-1.5 text-center">
+            <div class="text-xs uppercase tracking-wider font-extrabold text-[#7c4d15]">Active Angler Profile (Stored Locally in Browser)</div>
+            <div id="playerNameDisplay" class="text-xl sm:text-2xl font-extrabold text-[#2c1804]">Captain Marina's Cove</div>
+            <div class="flex items-center gap-2 w-full justify-center">
+              <input id="playerNameInput" type="text" maxlength="18" placeholder="Enter angler name..." class="hidden px-3 py-1 rounded-lg border-2 border-[#8c5a20] bg-[#ffffff] text-[#2c1804] text-sm font-bold w-44 text-center focus:outline-none" />
+              <button id="btnChangePlayer" class="glossy-blue-btn px-3.5 py-1 rounded-full text-xs font-extrabold">
+                Click here to change player
+              </button>
+            </div>
+            <div id="titleProgressSummary" class="text-xs font-bold text-[#5c360c] mt-0.5">
+              Stars Earned: ⭐ 6 | Levels Unlocked: 1 / 36
+            </div>
+          </div>
+
+          <!-- Continue Saved Game Banner Button -->
+          <button id="btnContinueSaved" class="glossy-green-btn w-full py-2.5 px-4 rounded-full text-sm sm:text-base font-extrabold flex items-center justify-center gap-2 shadow-xl">
+            <span>▶️</span>
+            <span id="continueSavedLabel">Continue Saved Game (Island 1)</span>
+          </button>
+
+          <!-- Career & Endless Mode Buttons -->
+          <div class="grid grid-cols-2 gap-2.5 w-full">
+            <button id="btnStartCareer" class="glossy-green-btn py-2 px-4 rounded-full text-sm sm:text-base font-extrabold">
+              🏝️ Career
+            </button>
+            <button id="btnStartEndless" class="glossy-amber-btn py-2 px-4 rounded-full text-sm sm:text-base font-extrabold">
+              ♾️ Endless Pond
+            </button>
+          </div>
+        </div>
+
+        <!-- Bottom Oval Blue Buttons -->
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 w-full max-w-3xl mb-1 shrink-0">
+          <button id="btnMenuSaveLoad" class="glossy-amber-btn py-2 px-3 rounded-full text-xs sm:text-sm font-extrabold">
+            💾 Save & Load
+          </button>
+          <button id="btnMenuOptions" class="glossy-blue-btn py-2 px-3 rounded-full text-xs sm:text-sm font-extrabold">
+            ⚙️ Options
+          </button>
+          <button id="btnMenuAwards" class="glossy-blue-btn py-2 px-3 rounded-full text-xs sm:text-sm font-extrabold">
+            🏆 Awards
+          </button>
+          <button id="btnMenuCredits" class="glossy-blue-btn py-2 px-3 rounded-full text-xs sm:text-sm font-extrabold">
+            📜 Almanac & Credits
+          </button>
+          <button id="btnMenuQuickPlay" class="glossy-blue-btn py-2 px-3 rounded-full text-xs sm:text-sm font-extrabold col-span-2 sm:col-span-1">
+            ⚡ Quick Level 1
+          </button>
+        </div>
+      </div>
+
+      <!-- ============================================================== -->
+      <!-- CAREER ISLAND MAP OVERLAY (36 Islands Across 6 Archipelago Acts) -->
+      <!-- ============================================================== -->
+      <div id="screenMap" class="hidden absolute inset-0 z-30 flex flex-col justify-between p-2.5 sm:p-5 bg-cover bg-center overflow-hidden" style="background-image: linear-gradient(180deg, rgba(6,38,68,0.45) 0%, rgba(4,24,46,0.82) 100%), url('assets/map_bg.jpg');">
+        <!-- Top Map Header -->
+        <div class="flex flex-col gap-2 wood-frame px-3 sm:px-4 py-2 sm:py-2.5 rounded-2xl">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-2.5 sm:gap-3">
+              <img src="assets/spr_dolphin.png" alt="Dolphin" class="w-9 h-9 sm:w-10 sm:h-10 object-contain" />
+              <div>
+                <h2 class="text-base sm:text-xl font-extrabold text-[#fff3a1] leading-tight">Archipelago Career Map (36 Islands • 6 Acts)</h2>
+                <p class="text-[11px] sm:text-xs font-medium text-[#ffebb3]">Conquer 6 Tropical Acts, trigger Golden Fever Frenzy, and upgrade your Speedboat & Helicopter!</p>
+              </div>
+            </div>
+            <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+              <div class="coin-counter-box px-3 py-1 rounded-full text-xs sm:text-sm font-extrabold flex items-center gap-1.5 text-[#ffef7a]">
+                <span>⭐</span> <span id="mapStarCount">6</span> <span>Stars</span>
+              </div>
+              <button id="btnMapContinueSaved" class="glossy-green-btn px-3 py-1.5 rounded-full text-xs sm:text-sm font-extrabold">
+                ▶️ Continue Saved
+              </button>
+              <button id="btnMapSaveManager" class="glossy-blue-btn px-3 py-1.5 rounded-full text-xs sm:text-sm font-extrabold">
+                💾 Save & Load
+              </button>
+              <button id="btnMapEndless" class="glossy-amber-btn px-3 py-1.5 rounded-full text-xs sm:text-sm font-extrabold">
+                ♾️ Play Endless Mode
+              </button>
+            </div>
+          </div>
+
+          <!-- Chapter / Act Filter Pills (6 Archipelago Acts) -->
+          <div id="mapActFilterBar" class="flex flex-wrap items-center gap-1.5 pt-1 border-t border-[#7a4b1a]">
+            <button data-act-filter="all" class="glossy-amber-btn px-2.5 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-extrabold">
+              🌊 All 24 Islands
+            </button>
+            <button data-act-filter="1" class="glossy-blue-btn px-2.5 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-extrabold">
+              🐟 Act I: Salmon Cove (1–6)
+            </button>
+            <button data-act-filter="2" class="glossy-blue-btn px-2.5 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-extrabold">
+              🦪 Act II: Pearl Reefs (7–12)
+            </button>
+            <button data-act-filter="3" class="glossy-blue-btn px-2.5 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-extrabold">
+              🐻 Act III: Grizzly Atolls (13–18)
+            </button>
+            <button data-act-filter="4" class="glossy-blue-btn px-2.5 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-extrabold">
+              👑 Act IV: Royal Masters (19–24)
+            </button>
+            <button data-act-filter="5" class="glossy-blue-btn px-2.5 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-extrabold">
+              🔱 Act V: Sunken Atlantis (25–30)
+            </button>
+            <button data-act-filter="6" class="glossy-blue-btn px-2.5 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-extrabold">
+              🌊 Act VI: Poseidon's Odyssey (31–36)
+            </button>
+          </div>
+        </div>
+
+        <!-- Center Island Level Nodes Grid -->
+        <div id="mapNodesContainer" class="my-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-2.5 max-h-[60%] overflow-y-auto p-1.5">
+          <!-- Populated dynamically by JS -->
+        </div>
+
+        <!-- Bottom Bar: Shop (Bottom-Left) & Menu (Bottom-Right) -->
+        <div class="flex items-center justify-between gap-2">
+          <button id="btnMapShop" class="glossy-blue-btn px-4 sm:px-6 py-2 sm:py-2.5 rounded-full text-sm sm:text-lg font-extrabold flex items-center gap-2">
+            <span>🛠️</span> <span>Upgrade Shop</span>
+          </button>
+          <div class="hidden lg:flex items-center gap-3 bg-[#2b1704]/90 border-2 border-[#c88736] px-4 py-1.5 rounded-full text-xs font-semibold text-[#ffebb3]">
+            <span>📱 Swipe to Collect Drops & Cage Bears</span>
+            <span>•</span>
+            <span>⚡ Trigger 2x Golden Fever Frenzy</span>
+            <span>•</span>
+            <span>💾 100% Client-Side LocalStorage Save</span>
+          </div>
+          <button id="btnMapToTitle" class="glossy-blue-btn px-4 sm:px-6 py-2 sm:py-2.5 rounded-full text-sm sm:text-lg font-extrabold">
+            🏠 Main Menu
+          </button>
+        </div>
+      </div>
+
+      <!-- ============================================================== -->
+      <!-- MODAL OVERLAY (Shop, Boat Market, Helicopter, Save/Load, Awards, Options, Level Complete, Guide) -->
+      <!-- ============================================================== -->
+      <div id="modalOverlay" class="hidden absolute inset-0 z-40 bg-black/70 backdrop-blur-[2px] flex items-center justify-center p-2.5 sm:p-6">
+        <div class="wood-frame rounded-2xl w-full max-w-2xl max-h-[92%] flex flex-col overflow-hidden">
+          <!-- Modal Header -->
+          <div class="flex items-center justify-between px-4 py-2.5 sm:py-3 bg-[#5c340b] border-b-2 border-[#3a1f04]">
+            <h3 id="modalTitle" class="text-base sm:text-xl font-extrabold text-[#fff3a1]">Modal Title</h3>
+            <button id="btnCloseModal" class="glossy-blue-btn px-3.5 py-1 rounded-lg text-xs sm:text-sm font-extrabold">
+              ✕ Close
+            </button>
+          </div>
+          <!-- Modal Body -->
+          <div id="modalBody" class="parchment p-3.5 sm:p-4 overflow-y-auto flex-1 text-sm sm:text-base leading-relaxed">
+            <!-- Dynamic Content -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    /********************************************************************
+     * LAGOON FRENZY: GONE FISHING — OPEN-SOURCE 36-ISLAND AQUATIC TYCOON
+     * 100% Original Assets • Client-Side Persistence • Mobile/iPad/Laptop Ready
+     ********************************************************************/
+
+    // --- 0. PRELOAD ILLUSTRATED 3D SPRITES & ORIGINAL POND BACKDROP ---
+    const SPRITE_URLS = {
+      pond_bg:      'assets/pond_bg.jpg',
+      salmon:       'assets/spr_salmon.png',
+      sturgeon:     'assets/spr_sturgeon.png',
+      shellfish:    'assets/spr_shellfish.png',
+      shark:        'assets/spr_shark.png',
+      seahorse:     'assets/spr_seahorse.png',
+      dolphin:      'assets/spr_dolphin.png',
+      bear_swim:    'assets/spr_bear_swim.png',
+      bear_caged:   'assets/spr_bear_caged.png',
+      boat:         'assets/spr_boat.png',
+      heli:         'assets/spr_heli.png',
+      warehouse:    'assets/spr_warehouse.png',
+      factory:      'assets/spr_factory.png'
+    };
+
+    const SPRITES = {};
+    for (const [key, url] of Object.entries(SPRITE_URLS)) {
+      const img = new Image();
+      img.src = url;
+      SPRITES[key] = img;
+    }
+
+    // --- 1. GAME DATA & DEFINITIONS ---
+    const ANIMALS_DATA = {
+      salmon: {
+        id: 'salmon',
+        name: 'Salmon',
+        emoji: '🐟',
+        spriteKey: 'salmon',
+        cost: 100,
+        sellPrice: 60,
+        foodType: 'pellet',
+        dropItem: 'red_caviar',
+        dropInterval: 11,
+        hungerRate: 4.0,
+        speed: 58,
+        color: '#60a5fa',
+        accent: '#1d4ed8',
+        size: 32,
+        role: 'producer',
+        desc: 'Eats pond pellets & drops Red Caviar. [Hotkey: 1]'
+      },
+      sturgeon: {
+        id: 'sturgeon',
+        name: 'Sturgeon',
+        emoji: '🐡',
+        spriteKey: 'sturgeon',
+        cost: 1000,
+        sellPrice: 600,
+        foodType: 'pellet',
+        dropItem: 'black_caviar',
+        dropInterval: 13,
+        hungerRate: 3.6,
+        speed: 48,
+        color: '#a3a380',
+        accent: '#4b5563',
+        size: 38,
+        role: 'producer',
+        desc: 'Royal bottom-dweller that produces Black Caviar. [Hotkey: 2]'
+      },
+      shellfish: {
+        id: 'shellfish',
+        name: 'Pearl Clam',
+        emoji: '🦪',
+        spriteKey: 'shellfish',
+        cost: 3000,
+        sellPrice: 1800,
+        foodType: 'pellet',
+        dropItem: 'pearl',
+        dropInterval: 15,
+        hungerRate: 3.2,
+        speed: 32,
+        color: '#f472b6',
+        accent: '#be185d',
+        size: 34,
+        role: 'producer',
+        desc: 'Rare giant clam that produces lustrous Ocean Pearls. [Hotkey: 3]'
+      },
+      shark: {
+        id: 'shark',
+        name: 'Guard Shark',
+        emoji: '🦈',
+        spriteKey: 'shark',
+        cost: 1000,
+        sellPrice: 600,
+        foodType: 'none',
+        dropItem: null,
+        dropInterval: 999,
+        hungerRate: 0,
+        speed: 94,
+        color: '#38bdf8',
+        accent: '#0369a1',
+        size: 40,
+        role: 'guard',
+        desc: 'Patrols the pond and automatically cages Swimming Bears! [Hotkey: 4]'
+      },
+      seahorse: {
+        id: 'seahorse',
+        name: 'Seahorse',
+        emoji: '🐴',
+        spriteKey: 'seahorse',
+        cost: 1500,
+        sellPrice: 900,
+        foodType: 'none',
+        dropItem: null,
+        dropInterval: 999,
+        hungerRate: 0,
+        speed: 86,
+        color: '#fb923c',
+        accent: '#c2410c',
+        size: 30,
+        role: 'collector',
+        desc: 'Helpful swimmer that automatically collects floating products! [Hotkey: 5]'
+      },
+      dolphin: {
+        id: 'dolphin',
+        name: 'Dolphin',
+        emoji: '🐬',
+        spriteKey: 'dolphin',
+        cost: 5000,
+        sellPrice: 3000,
+        foodType: 'mackerel',
+        dropItem: 'treasure_chest',
+        dropInterval: 14,
+        hungerRate: 3.8,
+        speed: 74,
+        color: '#818cf8',
+        accent: '#4338ca',
+        size: 42,
+        role: 'producer',
+        desc: 'Eats Mackerel ($60) and dives for Sunken Treasure Chests! [Hotkey: 6]'
+      }
+    };
+
+    const ITEMS_DATA = {
+      // Raw pond products
+      red_caviar:     { id: 'red_caviar',     name: 'Red Caviar',          emoji: '🔴', color: '#ef4444', rim: '#fecaca', price: 45,   size: 1 },
+      black_caviar:   { id: 'black_caviar',   name: 'Black Caviar',        emoji: '⚫', color: '#1e293b', rim: '#94a3b8', price: 220,  size: 1 },
+      pearl:          { id: 'pearl',          name: 'Ocean Pearl',         emoji: '⚪', color: '#fdf4ff', rim: '#f0abfc', price: 650,  size: 1 },
+      treasure_chest: { id: 'treasure_chest', name: 'Buried Treasure',     emoji: '🧰', color: '#d97706', rim: '#fef08a', price: 1400, size: 2 },
+      caged_bear:     { id: 'caged_bear',     name: 'Caged Bear',          emoji: '🐻', color: '#78350f', rim: '#fde047', price: 120,  size: 2, spriteKey: 'bear_caged' },
+
+      // Helicopter Imported Goods
+      butter:         { id: 'butter',         name: 'Dairy Butter',        emoji: '🧈', color: '#facc15', rim: '#fef9c3', price: 30,   importCost: 40,  size: 1 },
+      jar:            { id: 'jar',            name: 'Glass Jar',           emoji: '🫙', color: '#38bdf8', rim: '#e0f2fe', price: 60,   importCost: 80,  size: 1 },
+      gold_bar:       { id: 'gold_bar',       name: 'Gold Bullion',        emoji: '🪙', color: '#eab308', rim: '#fef08a', price: 240,  importCost: 300, size: 1 },
+      sushi_supply:   { id: 'sushi_supply',   name: 'Sushi Rice & Nori',   emoji: '🍙', color: '#10b981', rim: '#d1fae5', price: 280,  importCost: 350, size: 1 },
+      chemical:       { id: 'chemical',       name: 'Restoration Vial',    emoji: '🧪', color: '#a855f7', rim: '#f3e8ff', price: 320,  importCost: 400, size: 1 },
+
+      // Processed Factory Products
+      refined_red:    { id: 'refined_red',    name: 'Refined Red Caviar',  emoji: '🥣', color: '#f97316', rim: '#ffedd5', price: 110,  size: 1 },
+      salted_barrel:  { id: 'salted_barrel',  name: 'Salted Caviar Barrel',emoji: '🛢️', color: '#b45309', rim: '#fde68a', price: 210,  size: 1 },
+      caviar_butter:  { id: 'caviar_butter',  name: 'Caviar Sandwich',     emoji: '🥪', color: '#ea580c', rim: '#fed7aa', price: 380,  size: 1 },
+      pickled_black:  { id: 'pickled_black',  name: 'Pickled Black Caviar',emoji: '🥫', color: '#334155', rim: '#cbd5e1', price: 480,  size: 1 },
+      packaged_caviar:{ id: 'packaged_caviar',name: 'Luxury Caviar Jar',   emoji: '🏺', color: '#0284c7', rim: '#bae6fd', price: 890,  size: 1 },
+      polished_pearl: { id: 'polished_pearl', name: 'Polished Pearl',      emoji: '✨', color: '#ec4899', rim: '#fce7f3', price: 1250, size: 1 },
+      fine_jewelry:   { id: 'fine_jewelry',   name: 'Pearl Necklace',      emoji: '📿', color: '#9333ea', rim: '#e9d5ff', price: 2400, size: 1 },
+      sushi_platter:  { id: 'sushi_platter',  name: 'Royal Sushi Roll',    emoji: '🍣', color: '#16a34a', rim: '#bbf7d0', price: 1850, size: 1 },
+      museum_ticket:  { id: 'museum_ticket',  name: 'Relic & Ticket',      emoji: '🎟️', color: '#ca8a04', rim: '#fef08a', price: 3600, size: 1 }
+    };
+
+    // 7 Bank Building Pads aligned with the 7 sandy stone-ringed pads in our original pond_bg.jpg
+    const BUILDINGS_CONFIG = [
+      {
+        slotIndex: 0,
+        id: 'incubator',
+        name: 'Fish Incubator',
+        emoji: '⚙️',
+        xRatio: 0.50,
+        yRatio: 0.185,
+        baseCost: 250,
+        input: ['red_caviar'],
+        output: 'SPAWN_SALMON',
+        processTime: 9,
+        roofColor: '#3b82f6',
+        desc: 'Hatches Red Caviar directly into a live Salmon in the pond!'
+      },
+      {
+        slotIndex: 1,
+        id: 'red_refinery',
+        name: 'Red Caviar Refinery',
+        emoji: '🏭',
+        xRatio: 0.172,
+        yRatio: 0.285,
+        baseCost: 180,
+        input: ['red_caviar'],
+        output: 'refined_red',
+        processTime: 8,
+        roofColor: '#22c55e',
+        desc: 'Refines raw Red Caviar into Refined Red Caviar.'
+      },
+      {
+        slotIndex: 2,
+        id: 'salting_plant',
+        name: 'Salting Barrel Plant',
+        emoji: '🛢️',
+        xRatio: 0.108,
+        yRatio: 0.505,
+        baseCost: 320,
+        input: ['refined_red'],
+        output: 'salted_barrel',
+        processTime: 9,
+        roofColor: '#eab308',
+        desc: 'Packs Refined Red Caviar into Salted Caviar Barrels.'
+      },
+      {
+        slotIndex: 3,
+        id: 'mixing_plant',
+        name: 'Caviar Butter Bakery',
+        emoji: '🥪',
+        xRatio: 0.145,
+        yRatio: 0.72,
+        baseCost: 500,
+        input: ['salted_barrel', 'butter'],
+        output: 'caviar_butter',
+        processTime: 10,
+        roofColor: '#ef4444',
+        desc: 'Blends Salted Barrel + Imported Butter into Caviar Sandwiches.'
+      },
+      {
+        slotIndex: 4,
+        id: 'black_pack',
+        name: 'Black Caviar Cannery',
+        emoji: '🏺',
+        xRatio: 0.828,
+        yRatio: 0.285,
+        baseCost: 850,
+        input: ['black_caviar', 'jar'],
+        output: 'packaged_caviar',
+        processTime: 10,
+        roofColor: '#06b6d4',
+        desc: 'Packs Sturgeon Black Caviar + Imported Jar into Luxury Caviar Jars.'
+      },
+      {
+        slotIndex: 5,
+        id: 'jewelry_works',
+        name: 'Pearl & Jewelry Studio',
+        emoji: '📿',
+        xRatio: 0.892,
+        yRatio: 0.505,
+        baseCost: 1600,
+        input: ['pearl', 'gold_bar'],
+        output: 'fine_jewelry',
+        processTime: 11,
+        roofColor: '#a855f7',
+        desc: 'Crafts Clam Pearls + Imported Gold Bar into Pearl Necklaces.'
+      },
+      {
+        slotIndex: 6,
+        id: 'sushi_archive',
+        name: 'Royal Sushi & Relic Kitchen',
+        emoji: '🍣',
+        xRatio: 0.855,
+        yRatio: 0.72,
+        baseCost: 1200,
+        input: ['red_caviar', 'sushi_supply'],
+        altInput: ['treasure_chest', 'chemical'],
+        output: 'sushi_platter',
+        altOutput: 'museum_ticket',
+        processTime: 10,
+        roofColor: '#84cc16',
+        desc: 'Makes Royal Sushi (Caviar + Sushi Rice) OR restores Treasure (Chest + Vial)!'
+      }
+    ];
+
+    // 5-Level Upgrade Progression for Boat, Warehouse, Helicopter, and Feeder
+    const UPGRADE_DEFS = {
+      boatLevel: {
+        key: 'boatLevel',
+        name: '🚤 Speedboat Twin-Turbo & Market VIP',
+        shortLabel: 'Boat',
+        desc: 'Cuts market sailing time AND adds up to +50% VIP bonus coins on every cargo sale!',
+        levels: [
+          '9.0s Trip (+0% Sale Bonus)',
+          '6.5s Trip (+10% Sale Bonus)',
+          '4.5s Trip (+20% Sale Bonus)',
+          '3.0s Trip (+35% Sale Bonus)',
+          '1.8s Trip (+50% Sale Bonus)'
+        ],
+        durations: [9.0, 6.5, 4.5, 3.0, 1.8],
+        saleBonusMult: [1.0, 1.10, 1.20, 1.35, 1.50],
+        coinCosts: [0, 250, 600, 1400, 3000],
+        starCosts: [0, 2, 4, 6, 8]
+      },
+      warehouseLevel: {
+        key: 'warehouseLevel',
+        name: '📦 Bamboo Pier Warehouse Capacity',
+        shortLabel: 'Shed',
+        desc: 'Expands pier storage slots so you can stockpile more Caviar, Pearls, Imports & Caged Bears.',
+        levels: [
+          '15 Crate Slots',
+          '28 Crate Slots',
+          '45 Crate Slots',
+          '70 Crate Slots',
+          '110 Crate Slots'
+        ],
+        caps: [15, 28, 45, 70, 110],
+        coinCosts: [0, 200, 500, 1200, 2500],
+        starCosts: [0, 2, 4, 6, 8]
+      },
+      heliLevel: {
+        key: 'heliLevel',
+        name: '🚁 Cargo Helicopter Rotor & Bulk Contract',
+        shortLabel: 'Heli',
+        desc: 'Speeds up ingredient imports (Butter, Jars, Gold, Sushi Rice) and discounts import prices up to 25%!',
+        levels: [
+          '7.0s Flight (0% Discount)',
+          '5.0s Flight (-5% Import Cost)',
+          '3.5s Flight (-10% Import Cost)',
+          '2.4s Flight (-18% Import Cost)',
+          '1.5s Flight (-25% Import Cost)'
+        ],
+        durations: [7.0, 5.0, 3.5, 2.4, 1.5],
+        costMult: [1.0, 0.95, 0.90, 0.82, 0.75],
+        coinCosts: [0, 220, 550, 1300, 2800],
+        starCosts: [0, 2, 4, 6, 8]
+      },
+      feederLevel: {
+        key: 'feederLevel',
+        name: '🌾 Auto-Pellet Feeder Spread',
+        shortLabel: 'Feeder',
+        desc: 'Drops more nutritious fish pellets per click so large schools stay well-fed.',
+        levels: [
+          '3 Pellets / Click',
+          '5 Pellets / Click',
+          '8 Pellets / Click',
+          '12 Pellets / Click',
+          '16 Pellets / Click'
+        ],
+        counts: [3, 5, 8, 12, 16],
+        coinCosts: [0, 180, 450, 1000, 2200],
+        starCosts: [0, 2, 4, 6, 8]
+      }
+    };
+
+    // 36 Career Island Levels across 6 Archipelago Acts
+    const CAREER_LEVELS = [
+      // ACT I: SALMON COVE (Levels 1 - 6)
+      {
+        level: 1, act: 1,
+        title: 'Lagoon Awakening',
+        subtitle: 'Feed Salmon & harvest Red Caviar',
+        startCoins: 250,
+        startAnimals: { salmon: 2 },
+        startBuildings: [],
+        bearInterval: 28,
+        goldTime: 110, silverTime: 160, rewardStars: 3,
+        goals: { red_caviar: 6, salmon: 4, coins: 350 }
+      },
+      {
+        level: 2, act: 1,
+        title: 'Refinery Rapids',
+        subtitle: 'Run the Red Caviar Refinery & cage Bears',
+        startCoins: 300,
+        startAnimals: { salmon: 3 },
+        startBuildings: ['red_refinery'],
+        bearInterval: 22,
+        goldTime: 135, silverTime: 190, rewardStars: 3,
+        goals: { refined_red: 5, caged_bear: 2, coins: 600 }
+      },
+      {
+        level: 3, act: 1,
+        title: 'Barrel & Incubator Bay',
+        subtitle: 'Hatch new Salmon & pack Salted Caviar Barrels',
+        startCoins: 380,
+        startAnimals: { salmon: 2 },
+        startBuildings: ['incubator', 'red_refinery'],
+        bearInterval: 20,
+        goldTime: 150, silverTime: 210, rewardStars: 4,
+        goals: { salted_barrel: 4, salmon: 5, coins: 900 }
+      },
+      {
+        level: 4, act: 1,
+        title: 'Caviar Butter Feast',
+        subtitle: 'Import Butter via Helicopter & bake Caviar Sandwiches',
+        startCoins: 580,
+        startAnimals: { salmon: 4 },
+        startBuildings: ['red_refinery', 'salting_plant'],
+        bearInterval: 19,
+        goldTime: 165, silverTime: 230, rewardStars: 4,
+        goals: { caviar_butter: 4, red_caviar: 8, coins: 1400 }
+      },
+      {
+        level: 5, act: 1,
+        title: 'Shark Patrol Waters',
+        subtitle: 'Hire a Guard Shark & raise your first Sturgeon',
+        startCoins: 1200,
+        startAnimals: { salmon: 3, shark: 1 },
+        startBuildings: ['red_refinery', 'salting_plant', 'mixing_plant'],
+        bearInterval: 16,
+        goldTime: 175, silverTime: 240, rewardStars: 5,
+        goals: { black_caviar: 4, caviar_butter: 3, sturgeon: 1 }
+      },
+      {
+        level: 6, act: 1,
+        title: 'Imperial Black Caviar',
+        subtitle: 'Import Glass Jars & bottle Luxury Black Caviar',
+        startCoins: 1450,
+        startAnimals: { sturgeon: 2, salmon: 2 },
+        startBuildings: ['black_pack'],
+        bearInterval: 17,
+        goldTime: 175, silverTime: 240, rewardStars: 5,
+        goals: { packaged_caviar: 4, black_caviar: 6, coins: 2600 }
+      },
+
+      // ACT II: PEARL REEFS (Levels 7 - 12)
+      {
+        level: 7, act: 2,
+        title: 'Seahorse Helper Cove',
+        subtitle: 'Let the Seahorse gather drops while you make Sushi',
+        startCoins: 2200,
+        startAnimals: { salmon: 4, sturgeon: 1, seahorse: 1 },
+        startBuildings: ['sushi_archive', 'black_pack'],
+        bearInterval: 16,
+        goldTime: 180, silverTime: 250, rewardStars: 6,
+        goals: { sushi_platter: 4, packaged_caviar: 3, coins: 4200 }
+      },
+      {
+        level: 8, act: 2,
+        title: 'Pearl Clam Sanctuary',
+        subtitle: 'Harvest Ocean Pearls & craft Pearl Necklaces',
+        startCoins: 3600,
+        startAnimals: { shellfish: 1, salmon: 3, seahorse: 1 },
+        startBuildings: ['jewelry_works'],
+        bearInterval: 15,
+        goldTime: 185, silverTime: 260, rewardStars: 6,
+        goals: { pearl: 4, fine_jewelry: 3, coins: 6500 }
+      },
+      {
+        level: 9, act: 2,
+        title: 'Bear Grizzly Invasion',
+        subtitle: 'Defend your Pearls and Caviar from waves of Bears!',
+        startCoins: 4200,
+        startAnimals: { shellfish: 2, sturgeon: 2, shark: 1 },
+        startBuildings: ['jewelry_works', 'black_pack', 'sushi_archive'],
+        bearInterval: 12,
+        goldTime: 190, silverTime: 260, rewardStars: 7,
+        goals: { fine_jewelry: 4, sushi_platter: 4, caged_bear: 5 }
+      },
+      {
+        level: 10, act: 2,
+        title: 'Dolphin Treasure Dive',
+        subtitle: 'Toss Mackerel to Dolphins to uncover Buried Treasure',
+        startCoins: 6200,
+        startAnimals: { dolphin: 1, shellfish: 1, seahorse: 1 },
+        startBuildings: ['jewelry_works', 'sushi_archive'],
+        bearInterval: 15,
+        goldTime: 195, silverTime: 270, rewardStars: 7,
+        goals: { treasure_chest: 3, museum_ticket: 2, coins: 10000 }
+      },
+      {
+        level: 11, act: 2,
+        title: 'Archipelago Tycoon',
+        subtitle: 'Run a full Caviar, Jewelry & Relic empire',
+        startCoins: 7500,
+        startAnimals: { dolphin: 1, shellfish: 2, sturgeon: 2, seahorse: 1, shark: 1 },
+        startBuildings: ['red_refinery', 'salting_plant', 'mixing_plant', 'black_pack', 'jewelry_works', 'sushi_archive'],
+        bearInterval: 13,
+        goldTime: 210, silverTime: 290, rewardStars: 8,
+        goals: { caviar_butter: 4, fine_jewelry: 4, museum_ticket: 3, coins: 15000 }
+      },
+      {
+        level: 12, act: 2,
+        title: 'Coral Reef Finale',
+        subtitle: 'Master all 7 shore factories for the Reef Trophy!',
+        startCoins: 9500,
+        startAnimals: { dolphin: 2, shellfish: 2, sturgeon: 2, salmon: 4, seahorse: 1, shark: 2 },
+        startBuildings: ['incubator', 'red_refinery', 'salting_plant', 'mixing_plant', 'black_pack', 'jewelry_works', 'sushi_archive'],
+        bearInterval: 11,
+        goldTime: 230, silverTime: 320, rewardStars: 8,
+        goals: { sushi_platter: 5, fine_jewelry: 5, museum_ticket: 4, coins: 22000 }
+      },
+
+      // ACT III: GRIZZLY ATOLLS (Levels 13 - 18)
+      {
+        level: 13, act: 3,
+        title: 'Emerald Atoll Express',
+        subtitle: 'Upgrade your Speedboat to ship Caviar Barrels at lightning speed',
+        startCoins: 1100,
+        startAnimals: { salmon: 5, seahorse: 1 },
+        startBuildings: ['incubator', 'red_refinery', 'salting_plant'],
+        bearInterval: 14,
+        goldTime: 165, silverTime: 230, rewardStars: 6,
+        goals: { salted_barrel: 8, caviar_butter: 5, coins: 5500 }
+      },
+      {
+        level: 14, act: 3,
+        title: 'Grizzly Whirlpool Siege',
+        subtitle: 'Heavy Bear ambush! Deploy Guard Sharks & cage 8 Grizzlies',
+        startCoins: 2400,
+        startAnimals: { sturgeon: 2, salmon: 4, shark: 1 },
+        startBuildings: ['black_pack', 'red_refinery'],
+        bearInterval: 9.5,
+        goldTime: 175, silverTime: 245, rewardStars: 7,
+        goals: { caged_bear: 8, packaged_caviar: 5, coins: 7500 }
+      },
+      {
+        level: 15, act: 3,
+        title: 'Golden Caviar Regatta',
+        subtitle: 'Import Jars & Butter in bulk with an upgraded Helicopter',
+        startCoins: 3200,
+        startAnimals: { sturgeon: 3, salmon: 4, seahorse: 1 },
+        startBuildings: ['red_refinery', 'salting_plant', 'mixing_plant', 'black_pack'],
+        bearInterval: 13,
+        goldTime: 185, silverTime: 260, rewardStars: 7,
+        goals: { packaged_caviar: 6, caviar_butter: 6, coins: 11000 }
+      },
+      {
+        level: 16, act: 3,
+        title: 'Oyster Pearl Blitz',
+        subtitle: 'Cultivate a school of 4 Giant Pearl Clams & craft Jewelry',
+        startCoins: 5400,
+        startAnimals: { shellfish: 2, seahorse: 1, shark: 1 },
+        startBuildings: ['jewelry_works'],
+        bearInterval: 13,
+        goldTime: 190, silverTime: 265, rewardStars: 8,
+        goals: { shellfish: 4, pearl: 8, fine_jewelry: 5, coins: 14000 }
+      },
+      {
+        level: 17, act: 3,
+        title: 'Dolphin Armada Cove',
+        subtitle: 'Feed 3 Dolphins Mackerel & restore Sunken Relics',
+        startCoins: 7800,
+        startAnimals: { dolphin: 2, salmon: 3, seahorse: 1 },
+        startBuildings: ['sushi_archive'],
+        bearInterval: 12,
+        goldTime: 200, silverTime: 275, rewardStars: 8,
+        goals: { dolphin: 3, treasure_chest: 6, museum_ticket: 4, coins: 18000 }
+      },
+      {
+        level: 18, act: 3,
+        title: 'Grand Cannery Archipelago',
+        subtitle: 'Coordinate Sushi Rolls, Luxury Black Caviar & Sandwiches',
+        startCoins: 6800,
+        startAnimals: { sturgeon: 3, salmon: 5, seahorse: 2, shark: 1 },
+        startBuildings: ['red_refinery', 'salting_plant', 'mixing_plant', 'black_pack', 'sushi_archive'],
+        bearInterval: 11,
+        goldTime: 210, silverTime: 290, rewardStars: 9,
+        goals: { sushi_platter: 6, packaged_caviar: 6, caviar_butter: 6, coins: 24000 }
+      },
+
+      // ACT IV: ROYAL OCEAN MASTERS (Levels 19 - 24)
+      {
+        level: 19, act: 4,
+        title: 'Sunken Galleon Trench',
+        subtitle: 'Deep-sea treasure hunt with Dolphins & Pearl Clams',
+        startCoins: 8500,
+        startAnimals: { dolphin: 2, shellfish: 2, seahorse: 2, shark: 1 },
+        startBuildings: ['jewelry_works', 'sushi_archive'],
+        bearInterval: 11,
+        goldTime: 210, silverTime: 290, rewardStars: 9,
+        goals: { museum_ticket: 5, fine_jewelry: 5, treasure_chest: 6, coins: 28000 }
+      },
+      {
+        level: 20, act: 4,
+        title: 'Poseidon’s Banquet',
+        subtitle: 'Prepare a royal feast of Sushi Platters, Luxury Jars & Sandwiches',
+        startCoins: 7200,
+        startAnimals: { salmon: 6, sturgeon: 3, seahorse: 2, shark: 1 },
+        startBuildings: ['incubator', 'red_refinery', 'salting_plant', 'mixing_plant', 'black_pack', 'sushi_archive'],
+        bearInterval: 10.5,
+        goldTime: 215, silverTime: 300, rewardStars: 9,
+        goals: { sushi_platter: 8, packaged_caviar: 7, caviar_butter: 7, coins: 32000 }
+      },
+      {
+        level: 21, act: 4,
+        title: 'Diamond Reef Syndicate',
+        subtitle: 'High-stakes Pearl Necklace & Relic export marathon',
+        startCoins: 9800,
+        startAnimals: { shellfish: 3, dolphin: 2, seahorse: 2, shark: 2 },
+        startBuildings: ['jewelry_works', 'sushi_archive', 'black_pack'],
+        bearInterval: 10,
+        goldTime: 220, silverTime: 305, rewardStars: 10,
+        goals: { fine_jewelry: 8, museum_ticket: 6, caged_bear: 6, coins: 38000 }
+      },
+      {
+        level: 22, act: 4,
+        title: 'Kraken’s Grizzly Storm',
+        subtitle: 'Non-stop Grizzly Bear raids while building a fortune from scratch!',
+        startCoins: 5000,
+        startAnimals: { salmon: 4, sturgeon: 2, shellfish: 1, shark: 2, seahorse: 1 },
+        startBuildings: ['red_refinery', 'black_pack', 'jewelry_works'],
+        bearInterval: 8.5,
+        goldTime: 225, silverTime: 310, rewardStars: 10,
+        goals: { caged_bear: 12, fine_jewelry: 5, packaged_caviar: 6, coins: 35000 }
+      },
+      {
+        level: 23, act: 4,
+        title: 'Imperial Marina Metropolis',
+        subtitle: 'Operate all 7 factories at peak capacity with upgraded transport',
+        startCoins: 11000,
+        startAnimals: { dolphin: 2, shellfish: 3, sturgeon: 3, salmon: 5, seahorse: 2, shark: 2 },
+        startBuildings: ['incubator', 'red_refinery', 'salting_plant', 'mixing_plant', 'black_pack', 'jewelry_works', 'sushi_archive'],
+        bearInterval: 9.5,
+        goldTime: 235, silverTime: 320, rewardStars: 11,
+        goals: { sushi_platter: 8, fine_jewelry: 7, museum_ticket: 6, coins: 45000 }
+      },
+      {
+        level: 24, act: 4,
+        title: 'Crown of the Seven Seas',
+        subtitle: 'Claim the Royal Masters Trophy before entering Sunken Atlantis!',
+        startCoins: 14000,
+        startAnimals: { dolphin: 3, shellfish: 3, sturgeon: 3, salmon: 6, seahorse: 2, shark: 2 },
+        startBuildings: ['incubator', 'red_refinery', 'salting_plant', 'mixing_plant', 'black_pack', 'jewelry_works', 'sushi_archive'],
+        bearInterval: 9.0,
+        goldTime: 250, silverTime: 340, rewardStars: 12,
+        goals: { sushi_platter: 10, fine_jewelry: 10, museum_ticket: 8, coins: 60000 }
+      },
+
+      // ACT V: SUNKEN ATLANTIS (Levels 25 - 30)
+      {
+        level: 25, act: 5,
+        title: 'Gates of Sunken Atlantis',
+        subtitle: 'Dive into bioluminescent waters & recover Ancient Relics',
+        startCoins: 10500,
+        startAnimals: { dolphin: 2, shellfish: 2, seahorse: 2, shark: 1 },
+        startBuildings: ['jewelry_works', 'sushi_archive'],
+        bearInterval: 9.0,
+        goldTime: 210, silverTime: 295, rewardStars: 12,
+        goals: { treasure_chest: 8, museum_ticket: 6, fine_jewelry: 6, coins: 48000 }
+      },
+      {
+        level: 26, act: 5,
+        title: 'Sapphire Clam Sanctuary',
+        subtitle: 'Raise 5 Giant Pearl Clams & export 10 Pearl Necklaces',
+        startCoins: 12000,
+        startAnimals: { shellfish: 3, sturgeon: 2, seahorse: 2, shark: 2 },
+        startBuildings: ['jewelry_works', 'black_pack'],
+        bearInterval: 8.8,
+        goldTime: 220, silverTime: 305, rewardStars: 12,
+        goals: { shellfish: 5, fine_jewelry: 10, packaged_caviar: 8, coins: 55000 }
+      },
+      {
+        level: 27, act: 5,
+        title: 'Atlantean Sushi Symposium',
+        subtitle: 'Rapid-fire Sushi Rolls & Caviar Sandwiches for the Sea Council',
+        startCoins: 9200,
+        startAnimals: { salmon: 7, sturgeon: 3, seahorse: 2, shark: 2 },
+        startBuildings: ['incubator', 'red_refinery', 'salting_plant', 'mixing_plant', 'sushi_archive'],
+        bearInterval: 8.5,
+        goldTime: 220, silverTime: 310, rewardStars: 13,
+        goals: { sushi_platter: 12, caviar_butter: 10, salted_barrel: 10, coins: 52000 }
+      },
+      {
+        level: 28, act: 5,
+        title: 'Polar Bear Armada Blitz',
+        subtitle: 'Fierce Grizzly & Polar Bear tempest! Cage 15 Bears while crafting!',
+        startCoins: 11500,
+        startAnimals: { dolphin: 2, sturgeon: 3, salmon: 5, shark: 2, seahorse: 2 },
+        startBuildings: ['black_pack', 'sushi_archive', 'red_refinery'],
+        bearInterval: 7.5,
+        goldTime: 225, silverTime: 315, rewardStars: 13,
+        goals: { caged_bear: 15, museum_ticket: 7, packaged_caviar: 8, coins: 58000 }
+      },
+      {
+        level: 29, act: 5,
+        title: 'Trident Treasury Vault',
+        subtitle: 'Command a pod of 4 Dolphins & restore 10 Sunken Relics',
+        startCoins: 15000,
+        startAnimals: { dolphin: 3, shellfish: 3, seahorse: 2, shark: 2 },
+        startBuildings: ['jewelry_works', 'sushi_archive', 'black_pack'],
+        bearInterval: 8.2,
+        goldTime: 235, silverTime: 325, rewardStars: 14,
+        goals: { dolphin: 4, museum_ticket: 10, fine_jewelry: 9, coins: 68000 }
+      },
+      {
+        level: 30, act: 5,
+        title: 'Heart of Atlantis Citadel',
+        subtitle: 'Conquer Act V with all 7 shore factories running in harmony!',
+        startCoins: 16500,
+        startAnimals: { dolphin: 3, shellfish: 4, sturgeon: 3, salmon: 6, seahorse: 3, shark: 2 },
+        startBuildings: ['incubator', 'red_refinery', 'salting_plant', 'mixing_plant', 'black_pack', 'jewelry_works', 'sushi_archive'],
+        bearInterval: 8.0,
+        goldTime: 245, silverTime: 335, rewardStars: 15,
+        goals: { sushi_platter: 12, fine_jewelry: 11, museum_ticket: 10, coins: 78000 }
+      },
+
+      // ACT VI: POSEIDON'S ODYSSEY (Levels 31 - 36)
+      {
+        level: 31, act: 6,
+        title: 'Maelstrom Pioneer',
+        subtitle: 'Start from a bare island with zero factories and build an empire!',
+        startCoins: 6500,
+        startAnimals: { salmon: 4, sturgeon: 2, seahorse: 1 },
+        startBuildings: [],
+        bearInterval: 9.0,
+        goldTime: 240, silverTime: 330, rewardStars: 15,
+        goals: { caviar_butter: 8, packaged_caviar: 8, fine_jewelry: 6, coins: 65000 }
+      },
+      {
+        level: 32, act: 6,
+        title: 'Golden Fleet Regatta',
+        subtitle: 'Put your Lv.5 Speedboat & Helicopter to the ultimate speed test!',
+        startCoins: 14500,
+        startAnimals: { dolphin: 3, shellfish: 3, sturgeon: 4, seahorse: 2, shark: 2 },
+        startBuildings: ['black_pack', 'jewelry_works', 'sushi_archive'],
+        bearInterval: 8.0,
+        goldTime: 230, silverTime: 320, rewardStars: 16,
+        goals: { packaged_caviar: 12, fine_jewelry: 12, museum_ticket: 10, coins: 85000 }
+      },
+      {
+        level: 33, act: 6,
+        title: 'Abyssal Pearl Dynasty',
+        subtitle: 'Maintain 6 Pearl Clams and 4 Dolphins under heavy Bear siege',
+        startCoins: 18000,
+        startAnimals: { shellfish: 4, dolphin: 3, seahorse: 3, shark: 2 },
+        startBuildings: ['jewelry_works', 'sushi_archive'],
+        bearInterval: 7.2,
+        goldTime: 240, silverTime: 330, rewardStars: 16,
+        goals: { shellfish: 6, dolphin: 4, fine_jewelry: 14, museum_ticket: 11, coins: 95000 }
+      },
+      {
+        level: 34, act: 6,
+        title: 'Imperial Shogun Feast',
+        subtitle: 'Deliver 15 Royal Sushi Rolls, 12 Luxury Jars & 12 Caviar Sandwiches',
+        startCoins: 16000,
+        startAnimals: { salmon: 8, sturgeon: 4, seahorse: 3, shark: 2 },
+        startBuildings: ['incubator', 'red_refinery', 'salting_plant', 'mixing_plant', 'black_pack', 'sushi_archive'],
+        bearInterval: 7.5,
+        goldTime: 245, silverTime: 340, rewardStars: 18,
+        goals: { sushi_platter: 15, packaged_caviar: 12, caviar_butter: 12, coins: 92000 }
+      },
+      {
+        level: 35, act: 6,
+        title: 'Wrath of the Grizzly Titan',
+        subtitle: 'Cage 20 Swimming Bears while amassing a 110,000 Coin Treasury!',
+        startCoins: 19000,
+        startAnimals: { dolphin: 3, shellfish: 4, sturgeon: 4, salmon: 6, seahorse: 3, shark: 3 },
+        startBuildings: ['incubator', 'red_refinery', 'salting_plant', 'mixing_plant', 'black_pack', 'jewelry_works', 'sushi_archive'],
+        bearInterval: 6.5,
+        goldTime: 255, silverTime: 350, rewardStars: 18,
+        goals: { caged_bear: 20, fine_jewelry: 12, museum_ticket: 12, coins: 110000 }
+      },
+      {
+        level: 36, act: 6,
+        title: 'Legend of Gone Fishing',
+        subtitle: 'The 36th Island Ultimate Finale! Become Immortal Lord of the Seven Seas!',
+        startCoins: 24000,
+        startAnimals: { dolphin: 4, shellfish: 4, sturgeon: 4, salmon: 8, seahorse: 3, shark: 3 },
+        startBuildings: ['incubator', 'red_refinery', 'salting_plant', 'mixing_plant', 'black_pack', 'jewelry_works', 'sushi_archive'],
+        bearInterval: 6.8,
+        goldTime: 270, silverTime: 370, rewardStars: 25,
+        goals: { sushi_platter: 16, fine_jewelry: 16, museum_ticket: 14, coins: 150000 }
+      }
+    ];
+
+    const AWARDS_LIST = [
+      { id: 'first_catch',   title: 'First Splash',         icon: '🐟', desc: 'Complete your first Pond Level.' },
+      { id: 'bear_wrangler', title: 'Grizzly Wrangler',     icon: '🐻', desc: 'Cage 10 Swimming Bears across your career.' },
+      { id: 'caviar_chef',   title: 'Caviar Connoisseur',   icon: '🥪', desc: 'Produce 10 Caviar Sandwiches or Luxury Jars.' },
+      { id: 'pearl_jeweler', title: 'Royal Jeweler',        icon: '📿', desc: 'Craft 5 Pearl Necklaces from Ocean Pearls.' },
+      { id: 'dolphin_diver', title: 'Sunken Archaeologist', icon: '🐬', desc: 'Recover 5 Buried Treasures with Dolphins.' },
+      { id: 'gold_angler',   title: 'Gold Medal Angler',    icon: '🥇', desc: 'Beat any level within Gold Medal target time.' },
+      { id: 'fleet_admiral', title: 'Fleet Admiral',        icon: '🚤', desc: 'Upgrade your Speedboat or Helicopter to Level 3+.' },
+      { id: 'sea_emperor',   title: 'Archipelago Emperor',  icon: '👑', desc: 'Complete Act IV (Island 24) or Act VI (Island 36).' }
+    ];
+
+    // --- 2. 100% CLIENT-SIDE STORAGE & MID-LEVEL CHECKPOINT SAVE SYSTEM (ZERO DB REQUIRED) ---
+    const SAVE_PROFILE_KEY = 'lagoon_frenzy_save_v1';
+    const LEGACY_PROFILE_KEY = 'ff_gone_fishing_save_v1';
+    const SAVE_SESSION_KEY = 'lagoon_frenzy_active_session_v2';
+    const LEGACY_SESSION_KEY = 'ff_gone_fishing_active_session_v2';
+
+    const DEFAULT_PROFILE = {
+      playerName: "Captain Marina's Cove",
+      stars: 6,
+      unlockedLevel: 1,
+      levelMedals: {},
+      totalBearsCaged: 0,
+      totalCaviarCrafted: 0,
+      totalJewelryCrafted: 0,
+      totalTreasureFound: 0,
+      ambience: 'day',
+      awards: {},
+      upgrades: {
+        warehouseLevel: 1,
+        boatLevel: 1,
+        heliLevel: 1,
+        feederLevel: 1
+      }
+    };
+
+    let profile = JSON.parse(JSON.stringify(DEFAULT_PROFILE));
+    let selectedMapActFilter = 'all';
+
+    function loadProfile() {
+      try {
+        const raw = localStorage.getItem(SAVE_PROFILE_KEY) || localStorage.getItem(LEGACY_PROFILE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          profile = Object.assign({}, DEFAULT_PROFILE, parsed);
+          if (profile.playerName === "Scarlett's Cove") {
+            profile.playerName = "Captain Marina's Cove";
+          }
+          profile.upgrades = Object.assign({}, DEFAULT_PROFILE.upgrades, parsed.upgrades || {});
+          profile.awards = Object.assign({}, parsed.awards || {});
+          profile.levelMedals = Object.assign({}, parsed.levelMedals || {});
+        }
+      } catch (e) {}
+    }
+
+    function saveProfile() {
+      try {
+        const str = JSON.stringify(profile);
+        localStorage.setItem(SAVE_PROFILE_KEY, str);
+        localStorage.setItem(LEGACY_PROFILE_KEY, str);
+      } catch (e) {}
+      updateTitleAndMapUI();
+    }
+
+    function saveActiveSession(showNotification = false) {
+      if (gameState.screen !== 'pond' || gameState.levelCompleteTriggered) return false;
+      try {
+        const { w, h } = getPondCenterAndRadii();
+        const snapshot = {
+          version: 2,
+          savedAt: Date.now(),
+          mode: gameState.mode,
+          currentLevelNum: gameState.currentLevelNum,
+          coins: gameState.coins,
+          elapsedTime: gameState.elapsedTime,
+          frenzyCharge: gameState.frenzyCharge,
+          frenzyActiveTimer: gameState.frenzyActiveTimer,
+          goldTargetTime: gameState.goldTargetTime,
+          silverTargetTime: gameState.silverTargetTime,
+          bearSpawnTimer: gameState.bearSpawnTimer,
+          bearInterval: gameState.bearInterval,
+          currentGoals: gameState.currentGoals,
+          warehouse: gameState.warehouse,
+          harvestedTotals: gameState.harvestedTotals,
+          boat: gameState.boat,
+          heli: gameState.heli,
+          animals: gameState.animals.map(a => ({
+            id: a.id,
+            type: a.type,
+            xRatio: a.x / Math.max(1, w),
+            yRatio: a.y / Math.max(1, h),
+            vx: a.vx,
+            vy: a.vy,
+            hunger: a.hunger,
+            dropTimer: a.dropTimer,
+            facing: a.facing,
+            bobPhase: a.bobPhase
+          })),
+          drops: gameState.drops.map(d => ({
+            id: d.id,
+            itemKey: d.itemKey,
+            xRatio: d.x / Math.max(1, w),
+            yRatio: d.y / Math.max(1, h),
+            life: d.life,
+            maxLife: d.maxLife,
+            bob: d.bob
+          })),
+          bears: gameState.bears.map(b => ({
+            id: b.id,
+            xRatio: b.x / Math.max(1, w),
+            yRatio: b.y / Math.max(1, h),
+            vx: b.vx,
+            vy: b.vy,
+            clicks: b.clicks,
+            maxClicks: b.maxClicks,
+            cageDecay: b.cageDecay,
+            caged: b.caged,
+            life: b.life,
+            facing: b.facing
+          })),
+          buildings: gameState.buildings.map(b => ({
+            id: b.id,
+            level: b.level,
+            busy: b.busy,
+            progress: b.progress,
+            batchCount: b.batchCount,
+            activeOutput: b.activeOutput
+          }))
+        };
+        const str = JSON.stringify(snapshot);
+        localStorage.setItem(SAVE_SESSION_KEY, str);
+        localStorage.setItem(LEGACY_SESSION_KEY, str);
+        const badge = document.getElementById('hudAutoSaveBadge');
+        if (badge) {
+          badge.textContent = `💾 Saved ${formatTime(gameState.elapsedTime)}`;
+        }
+        if (showNotification) {
+          showToast(`💾 Progress Saved Locally! (Island ${gameState.currentLevelNum} • ${formatTime(gameState.elapsedTime)} • $${gameState.coins})`);
+        }
+        updateContinueButtonsUI();
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function getSavedSessionMetadata() {
+      try {
+        const raw = localStorage.getItem(SAVE_SESSION_KEY) || localStorage.getItem(LEGACY_SESSION_KEY);
+        if (!raw) return null;
+        const data = JSON.parse(raw);
+        if (!data || !data.currentLevelNum) return null;
+        return data;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function clearSavedSession() {
+      try {
+        localStorage.removeItem(SAVE_SESSION_KEY);
+        localStorage.removeItem(LEGACY_SESSION_KEY);
+      } catch (e) {}
+      updateContinueButtonsUI();
+    }
+
+    function resumeSavedSession() {
+      const snap = getSavedSessionMetadata();
+      if (!snap) {
+        startPondLevel(profile.unlockedLevel || 1, 'career');
+        return;
+      }
+      startPondLevel(snap.currentLevelNum, snap.mode || 'career', true);
+
+      const { w, h } = getPondCenterAndRadii();
+      gameState.coins = snap.coins ?? gameState.coins;
+      gameState.elapsedTime = snap.elapsedTime ?? 0;
+      gameState.frenzyCharge = snap.frenzyCharge ?? 35;
+      gameState.frenzyActiveTimer = snap.frenzyActiveTimer ?? 0;
+      gameState.bearSpawnTimer = snap.bearSpawnTimer ?? 15;
+      gameState.warehouse = Object.assign({}, snap.warehouse || {});
+      gameState.harvestedTotals = Object.assign({}, snap.harvestedTotals || {});
+      if (snap.boat) gameState.boat = Object.assign({}, gameState.boat, snap.boat);
+      if (snap.heli) gameState.heli = Object.assign({}, gameState.heli, snap.heli);
+
+      if (Array.isArray(snap.animals)) {
+        gameState.animals = snap.animals.map(a => ({
+          id: a.id || ('anim_' + Math.random().toString(36).slice(2)),
+          type: a.type,
+          x: (a.xRatio ?? 0.5) * w,
+          y: (a.yRatio ?? 0.5) * h,
+          vx: a.vx ?? 40,
+          vy: a.vy ?? 20,
+          hunger: a.hunger ?? 100,
+          dropTimer: a.dropTimer ?? 10,
+          facing: a.facing ?? 1,
+          bobPhase: a.bobPhase ?? 0
+        }));
+      }
+
+      if (Array.isArray(snap.drops)) {
+        gameState.drops = snap.drops.map(d => ({
+          id: d.id || ('drp_' + Math.random().toString(36).slice(2)),
+          itemKey: d.itemKey,
+          x: (d.xRatio ?? 0.5) * w,
+          y: (d.yRatio ?? 0.5) * h,
+          life: d.life ?? 20,
+          maxLife: d.maxLife ?? 24,
+          bob: d.bob ?? 0
+        }));
+      }
+
+      if (Array.isArray(snap.bears)) {
+        gameState.bears = snap.bears.map(b => ({
+          id: b.id || ('bear_' + Math.random().toString(36).slice(2)),
+          x: (b.xRatio ?? 0.5) * w,
+          y: (b.yRatio ?? 0.5) * h,
+          vx: b.vx ?? 40,
+          vy: b.vy ?? 30,
+          clicks: b.clicks ?? 0,
+          maxClicks: b.maxClicks ?? 4,
+          cageDecay: b.cageDecay ?? 0,
+          caged: !!b.caged,
+          life: b.life ?? 15,
+          facing: b.facing ?? 1
+        }));
+      }
+
+      if (Array.isArray(snap.buildings)) {
+        snap.buildings.forEach(savedB => {
+          const target = gameState.buildings.find(b => b.id === savedB.id);
+          if (target) {
+            target.level = savedB.level ?? target.level;
+            target.busy = !!savedB.busy;
+            target.progress = savedB.progress ?? 0;
+            target.batchCount = savedB.batchCount ?? 1;
+            target.activeOutput = savedB.activeOutput || target.output;
+          }
+        });
+      }
+
+      updatePondHud();
+      drawPondScene();
+      const label = snap.mode === 'endless' ? 'Endless Mode' : `Island ${snap.currentLevelNum}`;
+      showToast(`▶️ Resumed Saved Checkpoint: ${label} at ${formatTime(gameState.elapsedTime)} ($${gameState.coins})!`);
+    }
+
+    function updateContinueButtonsUI() {
+      const snap = getSavedSessionMetadata();
+      const lblEl = document.getElementById('continueSavedLabel');
+      const mapContBtn = document.getElementById('btnMapContinueSaved');
+      if (snap) {
+        const modeTitle = snap.mode === 'endless' ? 'Endless Pond' : `Island ${snap.currentLevelNum}`;
+        const txt = `Continue ${modeTitle} (${formatTime(snap.elapsedTime)} • $${snap.coins})`;
+        if (lblEl) lblEl.textContent = txt;
+        if (mapContBtn) mapContBtn.textContent = `▶️ Resume ${modeTitle} (${formatTime(snap.elapsedTime)})`;
+      } else {
+        const nextLv = profile.unlockedLevel || 1;
+        if (lblEl) lblEl.textContent = `Continue Career (Island ${nextLv} / ${CAREER_LEVELS.length})`;
+        if (mapContBtn) mapContBtn.textContent = `▶️ Play Island ${nextLv}`;
+      }
+    }
+
+    function exportSaveBundleString() {
+      const bundle = {
+        magic: 'LAGOON_FRENZY_V2',
+        exportedAt: new Date().toISOString(),
+        profile,
+        session: getSavedSessionMetadata()
+      };
+      return btoa(unescape(encodeURIComponent(JSON.stringify(bundle))));
+    }
+
+    function importSaveBundleString(str) {
+      try {
+        const clean = str.trim();
+        let parsed = null;
+        if (clean.startsWith('{')) {
+          parsed = JSON.parse(clean);
+        } else {
+          const jsonStr = decodeURIComponent(escape(atob(clean)));
+          parsed = JSON.parse(jsonStr);
+        }
+        if (!parsed || (!parsed.profile && !parsed.playerName)) {
+          throw new Error('Invalid save format');
+        }
+        const newProf = parsed.profile || parsed;
+        profile = Object.assign({}, DEFAULT_PROFILE, newProf);
+        profile.upgrades = Object.assign({}, DEFAULT_PROFILE.upgrades, newProf.upgrades || {});
+        profile.awards = Object.assign({}, newProf.awards || {});
+        profile.levelMedals = Object.assign({}, newProf.levelMedals || {});
+        saveProfile();
+
+        if (parsed.session && parsed.session.currentLevelNum) {
+          const sStr = JSON.stringify(parsed.session);
+          localStorage.setItem(SAVE_SESSION_KEY, sStr);
+          localStorage.setItem(LEGACY_SESSION_KEY, sStr);
+        }
+        updateContinueButtonsUI();
+        updateTitleAndMapUI();
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    // --- 3. WEB AUDIO SYNTHESIZER (Nostalgic Tropical & Splash SFX) ---
+    class SoundEngine {
+      constructor() {
+        this.ctx = null;
+        this.muted = false;
+        this.bgmTimer = null;
+        this.bgmStep = 0;
+      }
+      init() {
+        if (!this.ctx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (AudioCtx) this.ctx = new AudioCtx();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+      playTone(freq, type = 'sine', duration = 0.14, gainVal = 0.12, slideFreq = null) {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+        try {
+          const now = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, now);
+          if (slideFreq) {
+            osc.frequency.exponentialRampToValueAtTime(slideFreq, now + duration);
+          }
+          gain.gain.setValueAtTime(gainVal, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + duration);
+        } catch (e) {}
+      }
+      splash() {
+        this.playTone(320, 'sine', 0.16, 0.12, 680);
+      }
+      pop() {
+        this.playTone(520, 'triangle', 0.12, 0.15, 880);
+      }
+      coin() {
+        this.playTone(987.77, 'sine', 0.09, 0.14);
+        setTimeout(() => this.playTone(1318.5, 'sine', 0.18, 0.14), 70);
+      }
+      bearRoar() {
+        this.playTone(150, 'sawtooth', 0.28, 0.14, 85);
+      }
+      cageHit() {
+        this.playTone(440, 'square', 0.08, 0.1, 620);
+      }
+      fanfare() {
+        const notes = [523.25, 659.25, 783.99, 1046.5];
+        notes.forEach((n, idx) => {
+          setTimeout(() => this.playTone(n, 'triangle', 0.22, 0.16), idx * 110);
+        });
+      }
+      startBgm() {
+        if (this.bgmTimer) return;
+        const scale = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 392.00, 329.63];
+        this.bgmTimer = setInterval(() => {
+          if (this.muted || gameState.screen !== 'pond' || gameState.paused) return;
+          const note = scale[this.bgmStep % scale.length];
+          this.playTone(note, 'sine', 0.16, 0.035);
+          this.bgmStep++;
+        }, 420);
+      }
+    }
+    const sfx = new SoundEngine();
+
+    // --- 4. RUNTIME POND GAME STATE ---
+    const gameState = {
+      screen: 'title',
+      mode: 'career',
+      currentLevelNum: 1,
+      paused: false,
+      coins: 250,
+      elapsedTime: 0,
+      autoSaveAccum: 0,
+      frenzyCharge: 40, // 0 to 100
+      frenzyActiveTimer: 0, // >0 when 2x Golden Fever Frenzy is active
+      bonusStarfishTimer: 16,
+      goldTargetTime: 150,
+      silverTargetTime: 220,
+      bearSpawnTimer: 0,
+      bearInterval: 22,
+      comboCount: 0,
+      comboTimer: 0,
+      animals: [],
+      foods: [],
+      drops: [],
+      bonusChests: [],
+      bears: [],
+      buildings: [],
+      bubbles: [],
+      floatingTexts: [],
+      ripples: [],
+      warehouse: {},
+      harvestedTotals: {},
+      boat: {
+        active: false,
+        timer: 0,
+        duration: 8,
+        pendingCoins: 0
+      },
+      heli: {
+        active: false,
+        timer: 0,
+        duration: 6,
+        pendingItem: null,
+        pendingQty: 0
+      },
+      levelCompleteTriggered: false
+    };
+
+    // --- 5. HELPER & UPGRADE FUNCTIONS ---
+    function getUpgradeLevel(key) {
+      return Math.max(1, Math.min(5, profile.upgrades[key] || 1));
+    }
+    function getWarehouseCapacity() {
+      return UPGRADE_DEFS.warehouseLevel.caps[getUpgradeLevel('warehouseLevel') - 1];
+    }
+    function getWarehouseUsed() {
+      let used = 0;
+      for (const [k, qty] of Object.entries(gameState.warehouse)) {
+        const item = ITEMS_DATA[k];
+        if (item && qty > 0) used += qty * (item.size || 1);
+      }
+      return used;
+    }
+    function getBoatDuration() {
+      return UPGRADE_DEFS.boatLevel.durations[getUpgradeLevel('boatLevel') - 1];
+    }
+    function getBoatSaleBonusMult() {
+      return UPGRADE_DEFS.boatLevel.saleBonusMult[getUpgradeLevel('boatLevel') - 1];
+    }
+    function getHeliDuration() {
+      return UPGRADE_DEFS.heliLevel.durations[getUpgradeLevel('heliLevel') - 1];
+    }
+    function getHeliCostMult() {
+      return UPGRADE_DEFS.heliLevel.costMult[getUpgradeLevel('heliLevel') - 1];
+    }
+    function getItemImportCost(itemKey) {
+      const base = ITEMS_DATA[itemKey]?.importCost || 50;
+      return Math.max(10, Math.round(base * getHeliCostMult()));
+    }
+    function getPelletBatchCount() {
+      return UPGRADE_DEFS.feederLevel.counts[getUpgradeLevel('feederLevel') - 1];
+    }
+
+    function addFrenzyCharge(amount) {
+      if (gameState.frenzyActiveTimer > 0) return;
+      gameState.frenzyCharge = Math.min(100, (gameState.frenzyCharge || 0) + amount);
+      updateFrenzyButtonUI();
+    }
+
+    function triggerGoldenFrenzy() {
+      if (gameState.screen !== 'pond') return;
+      if (gameState.frenzyActiveTimer > 0) {
+        showToast(`⚡ Golden Fever Frenzy is already active (${Math.ceil(gameState.frenzyActiveTimer)}s left)!`);
+        return;
+      }
+      if (gameState.frenzyCharge < 100) {
+        showToast(`⚡ Charge your Frenzy Meter to 100% by collecting drops & caging bears! (${Math.round(gameState.frenzyCharge)}%)`);
+        return;
+      }
+      gameState.frenzyCharge = 0;
+      gameState.frenzyActiveTimer = 12.0;
+      sfx.fanfare();
+      const { cx, cy } = getPondCenterAndRadii();
+      addFloatingText(cx, cy - 30, '⚡ 2X GOLDEN FEVER FRENZY! (12s)', '#fde047');
+      addRipple(cx, cy, 140, 'rgba(250, 204, 21, 0.9)');
+      showToast('⚡ 2X GOLDEN FEVER FRENZY ACTIVATED! Fish produce 2.2x faster + bonus gold on every pickup!');
+      updateFrenzyButtonUI();
+    }
+
+    function updateFrenzyButtonUI() {
+      const btn = document.getElementById('btnTriggerFrenzy');
+      const lbl = document.getElementById('frenzyBtnLabel');
+      if (!btn || !lbl) return;
+      if (gameState.frenzyActiveTimer > 0) {
+        lbl.textContent = `FEVER ${Math.ceil(gameState.frenzyActiveTimer)}s!`;
+        btn.classList.add('frenzy-ready-glow');
+      } else if (gameState.frenzyCharge >= 100) {
+        lbl.textContent = 'Frenzy READY!';
+        btn.classList.add('frenzy-ready-glow');
+      } else {
+        lbl.textContent = `Frenzy ${Math.round(gameState.frenzyCharge)}%`;
+        btn.classList.remove('frenzy-ready-glow');
+      }
+    }
+
+    function performEquipmentUpgrade(upgKey, currency = 'coins') {
+      const def = UPGRADE_DEFS[upgKey];
+      if (!def) return false;
+      const curLv = getUpgradeLevel(upgKey);
+      if (curLv >= 5) {
+        showToast(`✅ ${def.name} is already at Maximum Level (Lv.5)!`);
+        return false;
+      }
+      if (currency === 'coins') {
+        const cost = def.coinCosts[curLv];
+        if (gameState.coins < cost) {
+          showToast(`Need ${cost} 🪙 in-level coins to upgrade ${def.shortLabel} to Lv.${curLv + 1}!`);
+          return false;
+        }
+        gameState.coins -= cost;
+      } else {
+        const cost = def.starCosts[curLv];
+        if (profile.stars < cost) {
+          showToast(`Need ⭐ ${cost} Career Stars to upgrade ${def.shortLabel} to Lv.${curLv + 1}!`);
+          return false;
+        }
+        profile.stars -= cost;
+      }
+
+      profile.upgrades[upgKey] = curLv + 1;
+      const newLv = profile.upgrades[upgKey];
+
+      if (upgKey === 'boatLevel' && gameState.boat.active) {
+        gameState.boat.duration = getBoatDuration();
+        gameState.boat.timer = Math.min(gameState.boat.timer, gameState.boat.duration);
+      }
+      if (upgKey === 'heliLevel' && gameState.heli.active) {
+        gameState.heli.duration = getHeliDuration();
+        gameState.heli.timer = Math.min(gameState.heli.timer, gameState.heli.duration);
+      }
+
+      if (newLv >= 3 && (upgKey === 'boatLevel' || upgKey === 'heliLevel')) {
+        unlockAward('fleet_admiral');
+      }
+
+      sfx.fanfare();
+      saveProfile();
+      saveActiveSession(false);
+      updatePondHud();
+      showToast(`⬆️ Upgraded ${def.shortLabel} to Lv.${newLv}: ${def.levels[newLv - 1]}!`);
+      return true;
+    }
+
+    function showToast(msg) {
+      const banner = document.getElementById('toastBanner');
+      if (!banner) return;
+      banner.textContent = msg;
+      banner.classList.remove('opacity-0', '-translate-y-2');
+      banner.classList.add('opacity-100', 'translate-y-0');
+      clearTimeout(banner._hideTimer);
+      banner._hideTimer = setTimeout(() => {
+        banner.classList.remove('opacity-100', 'translate-y-0');
+        banner.classList.add('opacity-0', '-translate-y-2');
+      }, 2500);
+    }
+
+    function formatTime(sec) {
+      const s = Math.max(0, Math.floor(sec));
+      const m = Math.floor(s / 60);
+      const rem = s % 60;
+      return `${String(m).padStart(2, '0')}:${String(rem).padStart(2, '0')}`;
+    }
+
+    function addFloatingText(x, y, text, color = '#fff3a1') {
+      gameState.floatingTexts.push({
+        x, y, text, color, life: 1.15, maxLife: 1.15
+      });
+    }
+
+    function addRipple(x, y, maxR = 38, color = 'rgba(186, 230, 253, 0.7)') {
+      gameState.ripples.push({ x, y, r: 4, maxR, color, alpha: 0.85 });
+    }
+
+    function unlockAward(awardId) {
+      if (!profile.awards[awardId]) {
+        profile.awards[awardId] = true;
+        const aw = AWARDS_LIST.find(a => a.id === awardId);
+        if (aw) {
+          sfx.fanfare();
+          showToast(`🏆 Award Unlocked: ${aw.title}!`);
+        }
+        saveProfile();
+      }
+    }
+
+    // --- 6. LEVEL INITIALIZATION ---
+    function startPondLevel(levelNum, mode = 'career', skipInitialSave = false) {
+      sfx.init();
+      sfx.startBgm();
+      gameState.screen = 'pond';
+      gameState.mode = mode;
+      gameState.currentLevelNum = levelNum;
+      gameState.paused = false;
+      gameState.elapsedTime = 0;
+      gameState.autoSaveAccum = 0;
+      gameState.frenzyCharge = 50;
+      gameState.frenzyActiveTimer = 0;
+      gameState.bonusStarfishTimer = 14;
+      gameState.comboCount = 0;
+      gameState.comboTimer = 0;
+      gameState.levelCompleteTriggered = false;
+      gameState.animals = [];
+      gameState.foods = [];
+      gameState.drops = [];
+      gameState.bonusChests = [];
+      gameState.bears = [];
+      gameState.bubbles = [];
+      gameState.floatingTexts = [];
+      gameState.ripples = [];
+      gameState.warehouse = {};
+      gameState.harvestedTotals = {};
+      gameState.boat = { active: false, timer: 0, duration: getBoatDuration(), pendingCoins: 0 };
+      gameState.heli = { active: false, timer: 0, duration: getHeliDuration(), pendingItem: null, pendingQty: 0 };
+
+      const lvlConfig = mode === 'endless'
+        ? {
+            level: 99,
+            title: 'Endless Archipelago Sandbox',
+            subtitle: 'Build every factory, upgrade Boat & Helicopter to Lv.5, and raise Dolphins!',
+            startCoins: 1800,
+            startAnimals: { salmon: 3, sturgeon: 1, seahorse: 1 },
+            startBuildings: ['incubator', 'red_refinery'],
+            bearInterval: 18,
+            goldTime: 9999,
+            silverTime: 9999,
+            rewardStars: 5,
+            goals: { coins: 50000, sushi_platter: 10, fine_jewelry: 10 }
+          }
+        : (CAREER_LEVELS.find(l => l.level === levelNum) || CAREER_LEVELS[0]);
+
+      gameState.coins = lvlConfig.startCoins;
+      gameState.bearInterval = lvlConfig.bearInterval;
+      gameState.bearSpawnTimer = lvlConfig.bearInterval * 0.75;
+      gameState.goldTargetTime = lvlConfig.goldTime;
+      gameState.silverTargetTime = lvlConfig.silverTime;
+      gameState.currentGoals = Object.assign({}, lvlConfig.goals);
+
+      const lvBadge = document.getElementById('hudLevelBadge');
+      if (lvBadge) lvBadge.textContent = mode === 'endless' ? 'Endless' : `Island ${lvlConfig.level}/${CAREER_LEVELS.length}`;
+
+      gameState.buildings = BUILDINGS_CONFIG.map(cfg => {
+        const isOwned = (lvlConfig.startBuildings || []).includes(cfg.id);
+        return {
+          ...cfg,
+          level: isOwned ? 1 : 0,
+          busy: false,
+          progress: 0,
+          batchCount: 1,
+          activeOutput: cfg.output
+        };
+      });
+
+      for (const [type, count] of Object.entries(lvlConfig.startAnimals || {})) {
+        for (let i = 0; i < count; i++) {
+          spawnAnimalInPond(type, false);
+        }
+      }
+
+      for (let i = 0; i < 14; i++) {
+        const pt = randomPointInPond();
+        gameState.bubbles.push({
+          x: pt.x,
+          y: pt.y,
+          r: 2 + Math.random() * 3.5,
+          speed: 10 + Math.random() * 14,
+          wobble: Math.random() * Math.PI * 2
+        });
+      }
+
+      document.getElementById('screenTitle').classList.add('hidden');
+      document.getElementById('screenMap').classList.add('hidden');
+      document.getElementById('pondTopHud').classList.remove('hidden');
+      document.getElementById('pondBottomHud').classList.remove('hidden');
+
+      resizeCanvas();
+      renderTopAnimalBar();
+      updateFrenzyButtonUI();
+      updatePondHud();
+      if (!skipInitialSave) {
+        saveActiveSession(false);
+        showToast(`🏝️ Island ${lvlConfig.level}: ${lvlConfig.title} — ${lvlConfig.subtitle}`);
+      }
+    }
+
+    function getPondCenterAndRadii() {
+      const canvas = document.getElementById('gameCanvas');
+      const w = canvas.width || 960;
+      const h = canvas.height || 540;
+      return {
+        cx: w * 0.50,
+        cy: h * 0.52,
+        rx: w * 0.285,
+        ry: h * 0.285,
+        w,
+        h
+      };
+    }
+
+    function randomPointInPond() {
+      const { cx, cy, rx, ry } = getPondCenterAndRadii();
+      const angle = Math.random() * Math.PI * 2;
+      const dist = Math.sqrt(Math.random()) * 0.78;
+      return {
+        x: cx + Math.cos(angle) * rx * dist,
+        y: cy + Math.sin(angle) * ry * dist
+      };
+    }
+
+    function spawnAnimalInPond(type, chargeCoins = true) {
+      const data = ANIMALS_DATA[type];
+      if (!data) return;
+      if (chargeCoins) {
+        if (gameState.coins < data.cost) {
+          showToast(`Not enough coins for ${data.name} ($${data.cost})!`);
+          return;
+        }
+        gameState.coins -= data.cost;
+        sfx.splash();
+      }
+      const pt = randomPointInPond();
+      const angle = Math.random() * Math.PI * 2;
+      gameState.animals.push({
+        id: 'anim_' + Math.random().toString(36).slice(2),
+        type,
+        x: pt.x,
+        y: pt.y,
+        vx: Math.cos(angle) * data.speed,
+        vy: Math.sin(angle) * data.speed,
+        hunger: 100,
+        dropTimer: data.dropInterval * (0.6 + Math.random() * 0.4),
+        facing: Math.cos(angle) >= 0 ? 1 : -1,
+        bobPhase: Math.random() * Math.PI * 2
+      });
+      addRipple(pt.x, pt.y, 44);
+      updatePondHud();
+    }
+
+    function dropFoodInPond(foodType, customX = null, customY = null) {
+      const cost = foodType === 'mackerel' ? 60 : 5;
+      if (gameState.coins < cost) {
+        showToast(`Need $${cost} to drop ${foodType === 'mackerel' ? 'Mackerel' : 'Fish Pellets'}!`);
+        return;
+      }
+      gameState.coins -= cost;
+      sfx.splash();
+      addFrenzyCharge(4);
+      const count = foodType === 'mackerel' ? 2 : getPelletBatchCount();
+      for (let i = 0; i < count; i++) {
+        const pt = (customX !== null && customY !== null)
+          ? { x: customX + (Math.random() - 0.5) * 55, y: customY + (Math.random() - 0.5) * 40 }
+          : randomPointInPond();
+        gameState.foods.push({
+          id: 'fd_' + Math.random().toString(36).slice(2),
+          type: foodType,
+          x: pt.x,
+          y: pt.y,
+          life: 26
+        });
+        addRipple(pt.x, pt.y, 24);
+      }
+      updatePondHud();
+    }
+
+    function spawnPondDrop(itemKey, x, y) {
+      const item = ITEMS_DATA[itemKey];
+      if (!item) return;
+      sfx.pop();
+      gameState.drops.push({
+        id: 'drp_' + Math.random().toString(36).slice(2),
+        itemKey,
+        x,
+        y,
+        life: 24,
+        maxLife: 24,
+        bob: Math.random() * Math.PI * 2
+      });
+      addRipple(x, y, 28, 'rgba(253, 224, 71, 0.65)');
+    }
+
+    function spawnDriftingBonusStarfish() {
+      const pt = randomPointInPond();
+      const isClam = Math.random() > 0.5;
+      gameState.bonusChests.push({
+        id: 'bns_' + Math.random().toString(36).slice(2),
+        emoji: isClam ? '🎁' : '🌟',
+        label: isClam ? 'Mystery Clam' : 'Golden Starfish',
+        rewardCoins: isClam ? 220 : 150,
+        x: pt.x,
+        y: pt.y,
+        life: 14,
+        bob: Math.random() * Math.PI * 2
+      });
+      addRipple(pt.x, pt.y, 42, 'rgba(250, 204, 21, 0.85)');
+    }
+
+    function collectBonusStarfish(bns) {
+      sfx.coin();
+      gameState.coins += bns.rewardCoins;
+      addFrenzyCharge(25);
+      addFloatingText(bns.x, bns.y - 16, `${bns.emoji} +$${bns.rewardCoins} & +25% Frenzy!`, '#fde047');
+      gameState.bonusChests = gameState.bonusChests.filter(item => item.id !== bns.id);
+      updatePondHud();
+      checkLevelGoals();
+    }
+
+    function collectDrop(dropObj, bySeahorse = false) {
+      const item = ITEMS_DATA[dropObj.itemKey];
+      if (!item) return false;
+      const used = getWarehouseUsed();
+      const cap = getWarehouseCapacity();
+      if (used + (item.size || 1) > cap) {
+        if (!bySeahorse) {
+          showToast('📦 Pier Warehouse is FULL! Sell cargo on the Speedboat or click ⬆️ Shed to upgrade!');
+        }
+        return false;
+      }
+      gameState.warehouse[dropObj.itemKey] = (gameState.warehouse[dropObj.itemKey] || 0) + 1;
+      gameState.harvestedTotals[dropObj.itemKey] = (gameState.harvestedTotals[dropObj.itemKey] || 0) + 1;
+
+      if (dropObj.itemKey === 'treasure_chest') {
+        profile.totalTreasureFound = (profile.totalTreasureFound || 0) + 1;
+        if (profile.totalTreasureFound >= 5) unlockAward('dolphin_diver');
+      }
+
+      addFrenzyCharge(10);
+
+      if (gameState.frenzyActiveTimer > 0) {
+        gameState.coins += 25;
+        addFloatingText(dropObj.x, dropObj.y - 36, '⚡ +$25 Frenzy Bonus!', '#fef08a');
+      }
+
+      if (!bySeahorse) {
+        if (gameState.comboTimer > 0) {
+          gameState.comboCount += 1;
+        } else {
+          gameState.comboCount = 1;
+        }
+        gameState.comboTimer = 1.65;
+        if (gameState.comboCount >= 2) {
+          const comboBonus = Math.min(50, gameState.comboCount * 5);
+          gameState.coins += comboBonus;
+          addFloatingText(dropObj.x, dropObj.y - 28, `🔥 Combo x${gameState.comboCount}! +$${comboBonus}`, '#fb923c');
+        }
+      }
+
+      sfx.pop();
+      addFloatingText(dropObj.x, dropObj.y - 12, `+1 ${item.name}`, '#fde047');
+      gameState.drops = gameState.drops.filter(d => d.id !== dropObj.id);
+      updatePondHud();
+      checkLevelGoals();
+      return true;
+    }
+
+    function spawnBearInPond() {
+      const pt = randomPointInPond();
+      sfx.bearRoar();
+      const angle = Math.random() * Math.PI * 2;
+      gameState.bears.push({
+        id: 'bear_' + Math.random().toString(36).slice(2),
+        x: pt.x,
+        y: pt.y,
+        vx: Math.cos(angle) * 44,
+        vy: Math.sin(angle) * 44,
+        clicks: 0,
+        maxClicks: 4,
+        cageDecay: 0,
+        caged: false,
+        life: 20,
+        facing: 1
+      });
+      addRipple(pt.x, pt.y, 58, 'rgba(248, 113, 113, 0.85)');
+      showToast('🐻 Watch out! A Grizzly Bear splashed into the pond! Tap or swipe across it to cage it!');
+    }
+
+    // --- 7. BUILDING CLICK & PRODUCTION LOGIC ---
+    function handleBuildingClick(b) {
+      if (b.level === 0) {
+        if (gameState.coins < b.baseCost) {
+          showToast(`Need $${b.baseCost} to build ${b.name}!`);
+          return;
+        }
+        gameState.coins -= b.baseCost;
+        b.level = 1;
+        sfx.coin();
+        addFloatingText(b.x, b.y - 25, `Built ${b.name}!`, '#86efac');
+        updatePondHud();
+        return;
+      }
+
+      if (b.busy) {
+        b.progress += 0.45;
+        sfx.pop();
+        addFloatingText(b.x, b.y - 18, '⚡ Faster!', '#93c5fd');
+        return;
+      }
+
+      const canRunRecipe = (inputs) => inputs.every(k => (gameState.warehouse[k] || 0) >= 1);
+
+      let chosenInputs = null;
+      let chosenOutput = null;
+
+      if (canRunRecipe(b.input)) {
+        chosenInputs = b.input;
+        chosenOutput = b.output;
+      } else if (b.altInput && canRunRecipe(b.altInput)) {
+        chosenInputs = b.altInput;
+        chosenOutput = b.altOutput;
+      }
+
+      if (!chosenInputs) {
+        const neededNames = b.input.map(k => `${ITEMS_DATA[k].emoji} ${ITEMS_DATA[k].name}`).join(' + ');
+        const altNames = b.altInput
+          ? ` OR ${b.altInput.map(k => `${ITEMS_DATA[k].emoji} ${ITEMS_DATA[k].name}`).join(' + ')}`
+          : '';
+        showToast(`${b.name} needs ${neededNames}${altNames} in Warehouse! (Use 🚁 Helicopter for imports)`);
+        return;
+      }
+
+      let batch = 0;
+      for (let i = 0; i < b.level; i++) {
+        if (chosenInputs.every(k => (gameState.warehouse[k] || 0) >= 1)) {
+          chosenInputs.forEach(k => {
+            gameState.warehouse[k] -= 1;
+          });
+          batch++;
+        }
+      }
+
+      if (batch > 0) {
+        b.busy = true;
+        b.batchCount = batch;
+        b.activeOutput = chosenOutput;
+        b.progress = 0;
+        sfx.splash();
+        addFloatingText(b.x, b.y - 22, `⚙️ Processing x${batch}`, '#fde047');
+        updatePondHud();
+      }
+    }
+
+    function upgradeBuildingInPond(b) {
+      if (b.level === 0) return;
+      const upgCost = Math.round(b.baseCost * (b.level * 1.1));
+      if (gameState.coins < upgCost) {
+        showToast(`Need $${upgCost} to upgrade ${b.name} to Lv.${b.level + 1}!`);
+        return;
+      }
+      gameState.coins -= upgCost;
+      b.level += 1;
+      sfx.fanfare();
+      addFloatingText(b.x, b.y - 25, `⬆️ ${b.name} Lv.${b.level}!`, '#fde047');
+      updatePondHud();
+    }
+
+    // --- 8. UPDATE LOOP (DT) ---
+    function updatePondSimulation(dt) {
+      if (gameState.screen !== 'pond' || gameState.paused) return;
+
+      gameState.elapsedTime += dt;
+      gameState.autoSaveAccum += dt;
+      if (gameState.comboTimer > 0) {
+        gameState.comboTimer = Math.max(0, gameState.comboTimer - dt);
+        if (gameState.comboTimer === 0) gameState.comboCount = 0;
+      }
+
+      if (gameState.frenzyActiveTimer > 0) {
+        gameState.frenzyActiveTimer = Math.max(0, gameState.frenzyActiveTimer - dt);
+        updateFrenzyButtonUI();
+      }
+
+      // Drifting Golden Starfish / Mystery Clam spawner
+      gameState.bonusStarfishTimer -= dt;
+      if (gameState.bonusStarfishTimer <= 0) {
+        gameState.bonusStarfishTimer = 18 + Math.random() * 8;
+        spawnDriftingBonusStarfish();
+      }
+      for (let i = gameState.bonusChests.length - 1; i >= 0; i--) {
+        const bns = gameState.bonusChests[i];
+        bns.life -= dt;
+        bns.bob += dt * 4;
+        if (bns.life <= 0) gameState.bonusChests.splice(i, 1);
+      }
+
+      // Auto-save live pond state every 3.5 seconds
+      if (gameState.autoSaveAccum >= 3.5) {
+        gameState.autoSaveAccum = 0;
+        saveActiveSession(false);
+      }
+
+      const { cx, cy, rx, ry } = getPondCenterAndRadii();
+      const frenzyMult = gameState.frenzyActiveTimer > 0 ? 1.65 : 1.0;
+
+      // 1. Bear Spawner
+      gameState.bearSpawnTimer -= dt;
+      if (gameState.bearSpawnTimer <= 0) {
+        gameState.bearSpawnTimer = gameState.bearInterval * (0.85 + Math.random() * 0.35);
+        spawnBearInPond();
+      }
+
+      // 2. Boat Transit
+      if (gameState.boat.active) {
+        gameState.boat.timer -= dt;
+        if (gameState.boat.timer <= 0) {
+          gameState.boat.active = false;
+          gameState.coins += gameState.boat.pendingCoins;
+          sfx.coin();
+          showToast(`🚤 Speedboat returned from market with +$${gameState.boat.pendingCoins}!`);
+          gameState.boat.pendingCoins = 0;
+          updatePondHud();
+          checkLevelGoals();
+        }
+      }
+
+      // 3. Helicopter Transit
+      if (gameState.heli.active) {
+        gameState.heli.timer -= dt;
+        if (gameState.heli.timer <= 0) {
+          gameState.heli.active = false;
+          const k = gameState.heli.pendingItem;
+          const q = gameState.heli.pendingQty;
+          if (k && q > 0) {
+            gameState.warehouse[k] = (gameState.warehouse[k] || 0) + q;
+            gameState.harvestedTotals[k] = (gameState.harvestedTotals[k] || 0) + q;
+            sfx.pop();
+            showToast(`🚁 Helicopter delivered +${q} ${ITEMS_DATA[k].emoji} ${ITEMS_DATA[k].name} to Warehouse!`);
+          }
+          gameState.heli.pendingItem = null;
+          gameState.heli.pendingQty = 0;
+          updatePondHud();
+          checkLevelGoals();
+        }
+      }
+
+      // 4. Update Foods
+      for (let i = gameState.foods.length - 1; i >= 0; i--) {
+        const f = gameState.foods[i];
+        f.life -= dt;
+        if (f.life <= 0) gameState.foods.splice(i, 1);
+      }
+
+      // 5. Update Floating Drops
+      for (let i = gameState.drops.length - 1; i >= 0; i--) {
+        const d = gameState.drops[i];
+        d.life -= dt;
+        d.bob += dt * 3;
+        if (d.life <= 0) gameState.drops.splice(i, 1);
+      }
+
+      // 6. Update Buildings
+      for (const b of gameState.buildings) {
+        if (b.busy) {
+          const speedMult = (1 + (b.level - 1) * 0.28) * frenzyMult;
+          b.progress += dt * speedMult;
+          if (b.progress >= b.processTime) {
+            b.busy = false;
+            b.progress = 0;
+            if (b.activeOutput === 'SPAWN_SALMON') {
+              for (let k = 0; k < b.batchCount; k++) {
+                spawnAnimalInPond('salmon', false);
+              }
+              addFloatingText(b.x, b.y - 20, `🐟 +${b.batchCount} Salmon Hatched!`, '#93c5fd');
+            } else {
+              for (let k = 0; k < b.batchCount; k++) {
+                const offsetAngle = (k / Math.max(1, b.batchCount)) * Math.PI;
+                const dropX = b.x + (b.x < cx ? 50 : -50) + Math.cos(offsetAngle) * 14;
+                const dropY = b.y + 14 + Math.sin(offsetAngle) * 12;
+                spawnPondDrop(b.activeOutput, dropX, dropY);
+              }
+              if (b.activeOutput === 'caviar_butter' || b.activeOutput === 'packaged_caviar') {
+                profile.totalCaviarCrafted = (profile.totalCaviarCrafted || 0) + b.batchCount;
+                if (profile.totalCaviarCrafted >= 10) unlockAward('caviar_chef');
+              }
+              if (b.activeOutput === 'fine_jewelry') {
+                profile.totalJewelryCrafted = (profile.totalJewelryCrafted || 0) + b.batchCount;
+                if (profile.totalJewelryCrafted >= 5) unlockAward('pearl_jeweler');
+              }
+            }
+          }
+        }
+      }
+
+      // 7. Update Bears
+      for (let i = gameState.bears.length - 1; i >= 0; i--) {
+        const bear = gameState.bears[i];
+        if (bear.caged) {
+          bear.life -= dt;
+          if (bear.life <= 0) gameState.bears.splice(i, 1);
+          continue;
+        }
+        if (bear.clicks > 0) {
+          bear.cageDecay += dt;
+          if (bear.cageDecay > 2.2) {
+            bear.clicks = Math.max(0, bear.clicks - 1);
+            bear.cageDecay = 0;
+          }
+        }
+
+        bear.x += bear.vx * dt;
+        bear.y += bear.vy * dt;
+        bear.facing = bear.vx >= 0 ? 1 : -1;
+
+        const normX = (bear.x - cx) / (rx * 0.82);
+        const normY = (bear.y - cy) / (ry * 0.82);
+        if (normX * normX + normY * normY > 1) {
+          const ang = Math.atan2(cy - bear.y, cx - bear.x);
+          bear.vx = Math.cos(ang) * 45;
+          bear.vy = Math.sin(ang) * 45;
+        }
+
+        for (let j = gameState.drops.length - 1; j >= 0; j--) {
+          const d = gameState.drops[j];
+          if (Math.hypot(d.x - bear.x, d.y - bear.y) < 32) {
+            addFloatingText(d.x, d.y, '🐻 Chomp!', '#f87171');
+            gameState.drops.splice(j, 1);
+          }
+        }
+        for (let j = gameState.animals.length - 1; j >= 0; j--) {
+          const anim = gameState.animals[j];
+          if (anim.type !== 'shark' && Math.hypot(anim.x - bear.x, anim.y - bear.y) < 30) {
+            addFloatingText(anim.x, anim.y, `🐻 tossed ${ANIMALS_DATA[anim.type].name}!`, '#f87171');
+            sfx.bearRoar();
+            gameState.animals.splice(j, 1);
+            updatePondHud();
+            break;
+          }
+        }
+      }
+
+      // 8. Update Animals
+      for (let i = gameState.animals.length - 1; i >= 0; i--) {
+        const a = gameState.animals[i];
+        const data = ANIMALS_DATA[a.type];
+        a.bobPhase += dt * 4 * frenzyMult;
+
+        if (data.role === 'guard') {
+          const targetBear = gameState.bears.find(b => !b.caged);
+          if (targetBear) {
+            const ang = Math.atan2(targetBear.y - a.y, targetBear.x - a.x);
+            a.vx = Math.cos(ang) * data.speed * 1.35;
+            a.vy = Math.sin(ang) * data.speed * 1.35;
+            if (Math.hypot(targetBear.x - a.x, targetBear.y - a.y) < 36) {
+              targetBear.caged = true;
+              targetBear.clicks = targetBear.maxClicks;
+              targetBear.life = 14;
+              sfx.cageHit();
+              addFloatingText(targetBear.x, targetBear.y - 15, '🦈 Shark Caged Bear!', '#38bdf8');
+            }
+          }
+        }
+
+        if (data.role === 'collector' && getWarehouseUsed() < getWarehouseCapacity()) {
+          if (gameState.drops.length > 0) {
+            let nearest = gameState.drops[0];
+            let minDist = Math.hypot(nearest.x - a.x, nearest.y - a.y);
+            for (const d of gameState.drops) {
+              const dist = Math.hypot(d.x - a.x, d.y - a.y);
+              if (dist < minDist) {
+                minDist = dist;
+                nearest = d;
+              }
+            }
+            const ang = Math.atan2(nearest.y - a.y, nearest.x - a.x);
+            a.vx = Math.cos(ang) * data.speed * 1.2 * frenzyMult;
+            a.vy = Math.sin(ang) * data.speed * 1.2 * frenzyMult;
+            if (minDist < 28) {
+              collectDrop(nearest, true);
+            }
+          }
+        }
+
+        if (data.role === 'producer') {
+          a.hunger -= data.hungerRate * dt;
+          if (a.hunger <= 0) {
+            addFloatingText(a.x, a.y, `💀 ${data.name} starved!`, '#fca5a5');
+            gameState.animals.splice(i, 1);
+            updatePondHud();
+            continue;
+          }
+
+          if (a.hunger < 65) {
+            const matchingFoods = gameState.foods.filter(f => f.type === data.foodType);
+            if (matchingFoods.length > 0) {
+              let nearestF = matchingFoods[0];
+              let minDist = Math.hypot(nearestF.x - a.x, nearestF.y - a.y);
+              for (const f of matchingFoods) {
+                const d = Math.hypot(f.x - a.x, f.y - a.y);
+                if (d < minDist) {
+                  minDist = d;
+                  nearestF = f;
+                }
+              }
+              const ang = Math.atan2(nearestF.y - a.y, nearestF.x - a.x);
+              a.vx = Math.cos(ang) * data.speed * 1.25 * frenzyMult;
+              a.vy = Math.sin(ang) * data.speed * 1.25 * frenzyMult;
+              if (minDist < 26) {
+                a.hunger = 100;
+                gameState.foods = gameState.foods.filter(f => f.id !== nearestF.id);
+                sfx.pop();
+                addFloatingText(a.x, a.y - 16, '😋 Fed!', '#86efac');
+              }
+            }
+          }
+
+          if (a.hunger > 25 && data.dropItem) {
+            a.dropTimer -= dt * (gameState.frenzyActiveTimer > 0 ? 2.2 : 1.0);
+            if (a.dropTimer <= 0) {
+              a.dropTimer = data.dropInterval;
+              spawnPondDrop(data.dropItem, a.x, a.y + 10);
+            }
+          }
+        }
+
+        a.x += a.vx * dt * (gameState.frenzyActiveTimer > 0 ? 1.35 : 1.0);
+        a.y += a.vy * dt * (gameState.frenzyActiveTimer > 0 ? 1.35 : 1.0);
+        if (Math.abs(a.vx) > 1) a.facing = a.vx >= 0 ? 1 : -1;
+
+        const nx = (a.x - cx) / (rx * 0.84);
+        const ny = (a.y - cy) / (ry * 0.84);
+        if (nx * nx + ny * ny > 1) {
+          const ang = Math.atan2(cy - a.y, cx - a.x) + (Math.random() - 0.5) * 0.5;
+          a.vx = Math.cos(ang) * data.speed;
+          a.vy = Math.sin(ang) * data.speed;
+        }
+      }
+
+      // 9. Update Bubbles, Ripples & Floating Text
+      for (const b of gameState.bubbles) {
+        b.y -= b.speed * dt;
+        b.wobble += dt * 3;
+        b.x += Math.sin(b.wobble) * 8 * dt;
+        const ny = (b.y - cy) / (ry * 0.8);
+        if (ny < -0.85) {
+          const pt = randomPointInPond();
+          b.x = pt.x;
+          b.y = cy + ry * 0.65;
+        }
+      }
+      for (let i = gameState.ripples.length - 1; i >= 0; i--) {
+        const rp = gameState.ripples[i];
+        rp.r += dt * 32;
+        rp.alpha -= dt * 0.7;
+        if (rp.alpha <= 0 || rp.r >= rp.maxR) gameState.ripples.splice(i, 1);
+      }
+      for (let i = gameState.floatingTexts.length - 1; i >= 0; i--) {
+        const ft = gameState.floatingTexts[i];
+        ft.y -= dt * 26;
+        ft.life -= dt;
+        if (ft.life <= 0) gameState.floatingTexts.splice(i, 1);
+      }
+
+      updateRealtimeCounters();
+      checkLevelGoals();
+    }
+
+    // --- 9. GOAL CHECKING & LEVEL COMPLETION ---
+    function getGoalCurrentValue(goalKey) {
+      if (goalKey === 'coins') return gameState.coins;
+      if (ANIMALS_DATA[goalKey]) {
+        return gameState.animals.filter(a => a.type === goalKey).length;
+      }
+      return Math.max(
+        gameState.warehouse[goalKey] || 0,
+        gameState.harvestedTotals[goalKey] || 0
+      );
+    }
+
+    function checkLevelGoals() {
+      if (gameState.levelCompleteTriggered || gameState.mode === 'endless') return;
+      const goals = gameState.currentGoals || {};
+      const keys = Object.keys(goals);
+      if (keys.length === 0) return;
+
+      const allMet = keys.every(k => getGoalCurrentValue(k) >= goals[k]);
+      if (allMet) {
+        gameState.levelCompleteTriggered = true;
+        gameState.paused = true;
+        sfx.fanfare();
+
+        const isGold = gameState.elapsedTime <= gameState.goldTargetTime;
+        const isSilver = !isGold && gameState.elapsedTime <= gameState.silverTargetTime;
+        const medal = isGold ? 'Gold' : (isSilver ? 'Silver' : 'Bronze');
+        const bonusStars = isGold ? 3 : (isSilver ? 2 : 1);
+
+        profile.stars = (profile.stars || 0) + bonusStars;
+        if (gameState.currentLevelNum >= profile.unlockedLevel && profile.unlockedLevel < CAREER_LEVELS.length) {
+          profile.unlockedLevel = gameState.currentLevelNum + 1;
+        }
+        profile.levelMedals[gameState.currentLevelNum] = medal;
+
+        clearSavedSession();
+
+        unlockAward('first_catch');
+        if (isGold) unlockAward('gold_angler');
+        if (gameState.currentLevelNum >= 24) unlockAward('sea_emperor');
+        saveProfile();
+
+        openLevelCompleteModal(medal, bonusStars);
+      }
+    }
+
+    // --- 10. CANVAS RENDERING (100% Original Pond Backdrop, Time-of-Day Ambience, Golden Frenzy Aura, 3D Sprites) ---
+    function drawPondScene() {
+      const canvas = document.getElementById('gameCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const { cx, cy, rx, ry, w, h } = getPondCenterAndRadii();
+
+      ctx.clearRect(0, 0, w, h);
+
+      // 1. Draw Original 3D Painted Pond Backdrop (pond_bg.jpg)
+      const bgImg = SPRITES.pond_bg;
+      if (bgImg && bgImg.complete && bgImg.naturalWidth > 0) {
+        ctx.drawImage(bgImg, 0, 0, w, h);
+      } else {
+        const grassGrad = ctx.createRadialGradient(cx, cy, rx * 0.7, cx, cy, Math.max(w, h) * 0.75);
+        grassGrad.addColorStop(0, '#4ea82f');
+        grassGrad.addColorStop(1, '#194d0b');
+        ctx.fillStyle = grassGrad;
+        ctx.fillRect(0, 0, w, h);
+      }
+
+      // 1b. Time-of-Day Ambience Lighting Overlay
+      const ambience = profile.ambience || 'day';
+      if (ambience === 'sunset') {
+        ctx.save();
+        const sunGrad = ctx.createLinearGradient(0, 0, w, h);
+        sunGrad.addColorStop(0, 'rgba(251, 146, 60, 0.22)');
+        sunGrad.addColorStop(0.5, 'rgba(217, 119, 6, 0.14)');
+        sunGrad.addColorStop(1, 'rgba(124, 45, 18, 0.24)');
+        ctx.fillStyle = sunGrad;
+        ctx.fillRect(0, 0, w, h);
+        ctx.restore();
+      } else if (ambience === 'night') {
+        ctx.save();
+        ctx.fillStyle = 'rgba(6, 20, 48, 0.42)';
+        ctx.fillRect(0, 0, w, h);
+        const bioGrad = ctx.createRadialGradient(cx, cy, rx * 0.1, cx, cy, rx * 0.95);
+        bioGrad.addColorStop(0, 'rgba(56, 189, 248, 0.26)');
+        bioGrad.addColorStop(0.6, 'rgba(16, 185, 129, 0.16)');
+        bioGrad.addColorStop(1, 'rgba(6, 20, 48, 0)');
+        ctx.fillStyle = bioGrad;
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // 2. Animated Underwater Sunbeams, Golden Fever Shimmer, Caustic Rings & Rising Bubbles
+      const t = performance.now() * 0.001;
+      ctx.save();
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, rx * 0.96, ry * 0.96, 0, 0, Math.PI * 2);
+      ctx.clip();
+
+      if (gameState.frenzyActiveTimer > 0) {
+        const fGrad = ctx.createRadialGradient(cx, cy, rx * 0.1, cx, cy, rx * 0.95);
+        fGrad.addColorStop(0, 'rgba(253, 224, 71, 0.28)');
+        fGrad.addColorStop(1, 'rgba(245, 158, 11, 0.05)');
+        ctx.fillStyle = fGrad;
+        ctx.fillRect(cx - rx, cy - ry, rx * 2, ry * 2);
+      }
+
+      // Sunbeams
+      for (let s = 0; s < 3; s++) {
+        const beamX = cx - rx * 0.45 + s * (rx * 0.45) + Math.sin(t * 0.6 + s) * 22;
+        const grad = ctx.createLinearGradient(beamX - 30, cy - ry, beamX + 40, cy + ry);
+        const beamColor = gameState.frenzyActiveTimer > 0
+          ? 'rgba(254, 240, 138, 0.28)'
+          : (ambience === 'sunset'
+            ? 'rgba(253, 224, 71, 0.20)'
+            : (ambience === 'night' ? 'rgba(45, 212, 191, 0.18)' : 'rgba(224, 242, 254, 0.16)'));
+        grad.addColorStop(0, beamColor);
+        grad.addColorStop(1, 'rgba(224, 242, 254, 0.0)');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.moveTo(beamX - 35, cy - ry);
+        ctx.lineTo(beamX + 35, cy - ry);
+        ctx.lineTo(beamX + 95, cy + ry);
+        ctx.lineTo(beamX - 15, cy + ry);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      // Caustic rings
+      ctx.strokeStyle = gameState.frenzyActiveTimer > 0
+        ? 'rgba(253, 224, 71, 0.42)'
+        : (ambience === 'night' ? 'rgba(94, 234, 212, 0.28)' : 'rgba(186, 230, 253, 0.22)');
+      ctx.lineWidth = 2;
+      for (let i = 0; i < 3; i++) {
+        ctx.beginPath();
+        ctx.ellipse(
+          cx + Math.sin(t + i) * 18,
+          cy + Math.cos(t * 0.8 + i) * 12,
+          rx * (0.38 + i * 0.2),
+          ry * (0.38 + i * 0.2),
+          0, 0, Math.PI * 2
+        );
+        ctx.stroke();
+      }
+
+      // Rising water bubbles
+      for (const b of gameState.bubbles) {
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+        ctx.fillStyle = ambience === 'night' ? 'rgba(94, 234, 212, 0.45)' : 'rgba(224, 242, 254, 0.35)';
+        ctx.fill();
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.55)';
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      // 3. Draw 7 Shore Building Pads & 3D Factory Machines
+      for (const b of gameState.buildings) {
+        b.x = w * b.xRatio;
+        b.y = h * b.yRatio;
+        const padR = Math.min(w, h) * 0.082;
+        b.padR = padR;
+
+        ctx.save();
+        if (b.level === 0) {
+          ctx.beginPath();
+          ctx.ellipse(b.x, b.y + 4, padR * 0.92, padR * 0.56, 0, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(246, 224, 166, 0.38)';
+          ctx.fill();
+          ctx.lineWidth = 2;
+          ctx.strokeStyle = 'rgba(120, 74, 21, 0.65)';
+          ctx.stroke();
+
+          drawCanvasLabel(ctx, b.x, b.y - 6, b.name, '#fff8dc', 11);
+          drawPricePill(ctx, b.x, b.y + 20, `🔨 ${b.baseCost}`, gameState.coins >= b.baseCost, false);
+        } else {
+          const facImg = SPRITES.factory;
+          const sprW = Math.round(padR * 1.85);
+          const sprH = Math.round(padR * 1.85);
+
+          ctx.beginPath();
+          ctx.ellipse(b.x, b.y + 8, padR * 0.95, padR * 0.55, 0, 0, Math.PI * 2);
+          ctx.fillStyle = b.roofColor + '55';
+          ctx.fill();
+          ctx.lineWidth = 2.5;
+          ctx.strokeStyle = b.roofColor;
+          ctx.stroke();
+
+          if (facImg && facImg.complete && facImg.naturalWidth > 0) {
+            const bounceY = b.busy ? Math.sin(t * 10) * 2.5 : 0;
+            ctx.drawImage(facImg, b.x - sprW / 2, b.y - sprH * 0.62 + bounceY, sprW, sprH);
+          }
+
+          const recipeText = `${b.name} Lv.${b.level}`;
+          drawCanvasLabel(ctx, b.x, b.y - sprH * 0.56, recipeText, '#ffef7a', 11, b.roofColor);
+
+          if (b.busy) {
+            const pct = Math.min(1, b.progress / b.processTime);
+            const barW = 64;
+            const barH = 9;
+            ctx.fillStyle = '#1e293b';
+            ctx.beginPath();
+            ctx.roundRect(b.x - barW / 2, b.y + 18, barW, barH, 4);
+            ctx.fill();
+            ctx.fillStyle = '#4ade80';
+            ctx.beginPath();
+            ctx.roundRect(b.x - barW / 2 + 1.5, b.y + 19.5, (barW - 3) * pct, barH - 3, 3);
+            ctx.fill();
+          } else {
+            const upgCost = Math.round(b.baseCost * (b.level * 1.1));
+            drawPricePill(ctx, b.x, b.y + 26, `⬆️ ${upgCost}`, gameState.coins >= upgCost, true);
+          }
+        }
+        ctx.restore();
+      }
+
+      // 4. Draw Water Ripples
+      for (const rp of gameState.ripples) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.ellipse(rp.x, rp.y, rp.r, rp.r * 0.6, 0, 0, Math.PI * 2);
+        ctx.strokeStyle = rp.color;
+        ctx.globalAlpha = Math.max(0, rp.alpha);
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // 5. Draw Food Pellets & Mackerel
+      for (const f of gameState.foods) {
+        ctx.save();
+        if (f.type === 'mackerel') {
+          const salImg = SPRITES.salmon;
+          if (salImg && salImg.complete && salImg.naturalWidth > 0) {
+            ctx.drawImage(salImg, f.x - 14, f.y - 14, 28, 28);
+          } else {
+            ctx.beginPath();
+            ctx.arc(f.x, f.y, 7, 0, Math.PI * 2);
+            ctx.fillStyle = '#38bdf8';
+            ctx.fill();
+          }
+        } else {
+          const radGrad = ctx.createRadialGradient(f.x - 1.5, f.y - 1.5, 1, f.x, f.y, 6);
+          radGrad.addColorStop(0, '#fef08a');
+          radGrad.addColorStop(0.6, '#facc15');
+          radGrad.addColorStop(1, '#a16207');
+          ctx.beginPath();
+          ctx.arc(f.x, f.y, 6, 0, Math.PI * 2);
+          ctx.fillStyle = radGrad;
+          ctx.fill();
+          ctx.lineWidth = 1.5;
+          ctx.strokeStyle = '#ffffff';
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+
+      // 6. Draw Swimming Aquatic Animals using 3D Sprites
+      for (const a of gameState.animals) {
+        const data = ANIMALS_DATA[a.type];
+        const bobY = Math.sin(a.bobPhase) * 3.5;
+        const spr = SPRITES[data.spriteKey];
+        const drawR = data.size * 1.55;
+
+        ctx.save();
+        ctx.translate(a.x, a.y + bobY);
+
+        ctx.beginPath();
+        ctx.ellipse(0, drawR * 0.36, drawR * 0.42, drawR * 0.18, 0, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(2, 22, 46, 0.42)';
+        ctx.fill();
+
+        ctx.save();
+        ctx.scale(a.facing, 1);
+        if (spr && spr.complete && spr.naturalWidth > 0) {
+          ctx.drawImage(spr, -drawR / 2, -drawR / 2, drawR, drawR);
+        } else {
+          ctx.beginPath();
+          ctx.ellipse(0, 0, data.size * 0.8, data.size * 0.5, 0, 0, Math.PI * 2);
+          ctx.fillStyle = data.color;
+          ctx.fill();
+        }
+        ctx.restore();
+
+        if (data.role === 'producer') {
+          const hpW = 36;
+          const pct = Math.max(0, Math.min(1, a.hunger / 100));
+          ctx.fillStyle = 'rgba(0,0,0,0.7)';
+          ctx.beginPath();
+          ctx.roundRect(-hpW / 2, -drawR * 0.52, hpW, 6, 3);
+          ctx.fill();
+          ctx.fillStyle = pct > 0.5 ? '#4ade80' : (pct > 0.25 ? '#facc15' : '#ef4444');
+          ctx.beginPath();
+          ctx.roundRect(-hpW / 2 + 1, -drawR * 0.52 + 1, (hpW - 2) * pct, 4, 2);
+          ctx.fill();
+
+          if (a.hunger < 35) {
+            drawCanvasLabel(ctx, 0, -drawR * 0.68, data.foodType === 'mackerel' ? 'Hungry (Mackerel)!' : 'Hungry!', '#fef08a', 10);
+          }
+        }
+        ctx.restore();
+      }
+
+      // 6b. Draw Drifting Golden Starfish & Mystery Clams
+      for (const bns of gameState.bonusChests) {
+        const bobY = Math.sin(bns.bob) * 4;
+        ctx.save();
+        ctx.translate(bns.x, bns.y + bobY);
+        const g = ctx.createRadialGradient(0, 0, 2, 0, 0, 22);
+        g.addColorStop(0, '#ffffff');
+        g.addColorStop(0.5, '#fde047');
+        g.addColorStop(1, '#d97706');
+        ctx.beginPath();
+        ctx.arc(0, 0, 21, 0, Math.PI * 2);
+        ctx.fillStyle = g;
+        ctx.fill();
+        ctx.lineWidth = 2.5;
+        ctx.strokeStyle = '#ffffff';
+        ctx.stroke();
+        ctx.font = '20px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(bns.emoji, 0, 1);
+        drawCanvasLabel(ctx, 0, -28, `${bns.label} (+$${bns.rewardCoins})`, '#fef08a', 10);
+        ctx.restore();
+      }
+
+      // 7. Draw Floating Drops (3D Glossy Orbs + Crisp Badges)
+      for (const d of gameState.drops) {
+        const item = ITEMS_DATA[d.itemKey];
+        if (!item) continue;
+        const bobY = Math.sin(d.bob) * 3.2;
+        ctx.save();
+        ctx.translate(d.x, d.y + bobY);
+
+        const orbGrad = ctx.createRadialGradient(-5, -5, 2, 0, 0, 19);
+        orbGrad.addColorStop(0, '#ffffff');
+        orbGrad.addColorStop(0.35, item.rim || '#fef08a');
+        orbGrad.addColorStop(1, item.color || '#ca8a04');
+
+        ctx.beginPath();
+        ctx.arc(0, 0, 19, 0, Math.PI * 2);
+        ctx.fillStyle = orbGrad;
+        ctx.fill();
+        ctx.lineWidth = 2.5;
+        ctx.strokeStyle = '#ffffff';
+        ctx.stroke();
+
+        ctx.font = '18px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(item.emoji, 0, 1);
+        ctx.restore();
+      }
+
+      // 8. Draw Bears (3D Swimming Bear Sprite vs 3D Wooden Caged Bear Sprite)
+      for (const bear of gameState.bears) {
+        ctx.save();
+        ctx.translate(bear.x, bear.y);
+
+        ctx.beginPath();
+        ctx.ellipse(0, 18, 28, 13, 0, 0, Math.PI * 2);
+        ctx.fillStyle = bear.caged ? 'rgba(250, 204, 21, 0.5)' : 'rgba(239, 68, 68, 0.5)';
+        ctx.fill();
+
+        const bearImg = bear.caged ? SPRITES.bear_caged : SPRITES.bear_swim;
+        const bSize = 66;
+        ctx.save();
+        ctx.scale(bear.facing, 1);
+        if (bearImg && bearImg.complete && bearImg.naturalWidth > 0) {
+          ctx.drawImage(bearImg, -bSize / 2, -bSize / 2, bSize, bSize);
+        } else {
+          ctx.beginPath();
+          ctx.arc(0, 0, 22, 0, Math.PI * 2);
+          ctx.fillStyle = '#78350f';
+          ctx.fill();
+        }
+        ctx.restore();
+
+        if (bear.clicks > 0 && !bear.caged) {
+          ctx.strokeStyle = '#fbbf24';
+          ctx.lineWidth = 3;
+          ctx.strokeRect(-24, -24, 48, 48);
+          for (let bIdx = 1; bIdx <= bear.clicks; bIdx++) {
+            const bx = -24 + (bIdx * 48) / 5;
+            ctx.beginPath();
+            ctx.moveTo(bx, -24);
+            ctx.lineTo(bx, 24);
+            ctx.stroke();
+          }
+        }
+
+        drawCanvasLabel(
+          ctx,
+          0,
+          -36,
+          bear.caged ? '📦 Tap/Swipe to Store!' : `Tap/Swipe Cage (${bear.clicks}/${bear.maxClicks})`,
+          bear.caged ? '#bbf7d0' : '#fecaca',
+          11
+        );
+        ctx.restore();
+      }
+
+      // 9. Draw Floating Texts
+      for (const ft of gameState.floatingTexts) {
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, ft.life / ft.maxLife);
+        drawCanvasLabel(ctx, ft.x, ft.y, ft.text, ft.color, 13);
+        ctx.restore();
+      }
+    }
+
+    function drawCanvasLabel(ctx, x, y, text, textColor = '#ffffff', fontSize = 11, badgeColor = 'rgba(20, 36, 58, 0.85)') {
+      ctx.save();
+      ctx.font = `800 ${fontSize}px "Plus Jakarta Sans", "Inter", sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      const metrics = ctx.measureText(text);
+      const padX = 7;
+      const boxW = metrics.width + padX * 2;
+      const boxH = fontSize + 7;
+
+      ctx.fillStyle = badgeColor;
+      ctx.beginPath();
+      ctx.roundRect(x - boxW / 2, y - boxH / 2, boxW, boxH, 6);
+      ctx.fill();
+      ctx.lineWidth = 1.2;
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
+      ctx.stroke();
+
+      ctx.fillStyle = textColor;
+      ctx.fillText(text, x, y + 0.5);
+      ctx.restore();
+    }
+
+    function drawPricePill(ctx, x, y, text, affordable, small = false) {
+      const w = small ? 68 : 78;
+      const h = small ? 20 : 23;
+      ctx.save();
+      const grad = ctx.createLinearGradient(x, y - h / 2, x, y + h / 2);
+      if (affordable) {
+        grad.addColorStop(0, '#5ec4ff');
+        grad.addColorStop(0.5, '#0284c7');
+        grad.addColorStop(1, '#034c8c');
+      } else {
+        grad.addColorStop(0, '#64748b');
+        grad.addColorStop(1, '#334155');
+      }
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.roundRect(x - w / 2, y - h / 2, w, h, 11);
+      ctx.fill();
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = affordable ? '#fde047' : '#94a3b8';
+      ctx.stroke();
+
+      ctx.fillStyle = affordable ? '#fff8b8' : '#cbd5e1';
+      ctx.font = `800 ${small ? 11 : 12}px "Plus Jakarta Sans", "Inter", sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(`${text} 🪙`, x, y + 0.5);
+      ctx.restore();
+    }
+
+    // --- 11. CANVAS POINTER & MOBILE/IPAD SWIPE INTERACTION ---
+    let isPointerDownOnCanvas = false;
+    let lastSwipeBearHitTime = 0;
+
+    function getCanvasCoordinates(e) {
+      const canvas = document.getElementById('gameCanvas');
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / Math.max(1, rect.width);
+      const scaleY = canvas.height / Math.max(1, rect.height);
+      return {
+        x: (e.clientX - rect.left) * scaleX,
+        y: (e.clientY - rect.top) * scaleY,
+        hitMult: e.pointerType === 'touch' ? 1.35 : 1.0
+      };
+    }
+
+    function interactWithBearAt(x, y, hitMult = 1.0) {
+      for (let i = gameState.bears.length - 1; i >= 0; i--) {
+        const bear = gameState.bears[i];
+        if (Math.hypot(bear.x - x, bear.y - y) <= 38 * hitMult) {
+          if (bear.caged) {
+            const used = getWarehouseUsed();
+            const cap = getWarehouseCapacity();
+            if (used + 2 > cap) {
+              showToast('📦 Need 2 free Warehouse slots to store a Caged Bear!');
+              return true;
+            }
+            gameState.warehouse.caged_bear = (gameState.warehouse.caged_bear || 0) + 1;
+            gameState.harvestedTotals.caged_bear = (gameState.harvestedTotals.caged_bear || 0) + 1;
+            profile.totalBearsCaged = (profile.totalBearsCaged || 0) + 1;
+            if (profile.totalBearsCaged >= 10) unlockAward('bear_wrangler');
+            addFrenzyCharge(15);
+            sfx.pop();
+            addFloatingText(bear.x, bear.y, '+1 Caged Bear!', '#fde047');
+            gameState.bears.splice(i, 1);
+            updatePondHud();
+            checkLevelGoals();
+          } else {
+            bear.clicks += 1;
+            bear.cageDecay = 0;
+            addFrenzyCharge(5);
+            sfx.cageHit();
+            if (bear.clicks >= bear.maxClicks) {
+              bear.caged = true;
+              bear.life = 15;
+              addFloatingText(bear.x, bear.y - 16, '🔒 Caged! Tap/Swipe to collect!', '#86efac');
+            }
+          }
+          return true;
+        }
+      }
+      return false;
+    }
+
+    function handleCanvasPointerDown(e) {
+      if (gameState.screen !== 'pond' || gameState.paused) return;
+      isPointerDownOnCanvas = true;
+      const { x, y, hitMult } = getCanvasCoordinates(e);
+
+      // 0. Check Bonus Starfish / Mystery Clam First
+      for (let i = gameState.bonusChests.length - 1; i >= 0; i--) {
+        const bns = gameState.bonusChests[i];
+        if (Math.hypot(bns.x - x, bns.y - y) <= 34 * hitMult) {
+          collectBonusStarfish(bns);
+          return;
+        }
+      }
+
+      // 1. Check Bears
+      if (interactWithBearAt(x, y, hitMult)) return;
+
+      // 2. Check Floating Product Drops
+      for (let i = gameState.drops.length - 1; i >= 0; i--) {
+        const d = gameState.drops[i];
+        if (Math.hypot(d.x - x, d.y - y) <= 30 * hitMult) {
+          collectDrop(d, false);
+          return;
+        }
+      }
+
+      // 3. Check 7 Building Pads
+      for (const b of gameState.buildings) {
+        if (b.level > 0 && !b.busy && Math.abs(x - b.x) <= 42 * hitMult && Math.abs(y - (b.y + 26)) <= 18 * hitMult) {
+          upgradeBuildingInPond(b);
+          return;
+        }
+        if (Math.hypot(b.x - x, b.y - y) <= (b.padR || 46) * hitMult) {
+          handleBuildingClick(b);
+          return;
+        }
+      }
+
+      // 4. Tap/Click inside the Pond Water -> Drop Fish Pellets directly!
+      const { cx, cy, rx, ry } = getPondCenterAndRadii();
+      const nx = (x - cx) / rx;
+      const ny = (y - cy) / ry;
+      if (nx * nx + ny * ny <= 1.05) {
+        dropFoodInPond('pellet', x, y);
+      }
+    }
+
+    function handleCanvasPointerMove(e) {
+      if (!isPointerDownOnCanvas || gameState.screen !== 'pond' || gameState.paused) return;
+      const { x, y, hitMult } = getCanvasCoordinates(e);
+
+      for (let i = gameState.bonusChests.length - 1; i >= 0; i--) {
+        const bns = gameState.bonusChests[i];
+        if (Math.hypot(bns.x - x, bns.y - y) <= 34 * hitMult) {
+          collectBonusStarfish(bns);
+        }
+      }
+
+      for (let i = gameState.drops.length - 1; i >= 0; i--) {
+        const d = gameState.drops[i];
+        if (Math.hypot(d.x - x, d.y - y) <= 32 * hitMult) {
+          collectDrop(d, false);
+        }
+      }
+
+      const now = performance.now();
+      if (now - lastSwipeBearHitTime > 140) {
+        if (interactWithBearAt(x, y, hitMult)) {
+          lastSwipeBearHitTime = now;
+        }
+      }
+    }
+
+    function handleCanvasPointerUp() {
+      isPointerDownOnCanvas = false;
+    }
+
+    // --- 12. UI RENDERERS & MODALS ---
+    function renderTopAnimalBar() {
+      const container = document.getElementById('animalBuyBar');
+      if (!container) return;
+      container.innerHTML = '';
+      Object.values(ANIMALS_DATA).forEach(anim => {
+        const btn = document.createElement('button');
+        btn.className = 'medallion-wrap';
+        btn.dataset.animalId = anim.id;
+        btn.title = `Buy ${anim.name} ($${anim.cost}) — ${anim.desc}`;
+        const sprSrc = SPRITE_URLS[anim.spriteKey] || '';
+        btn.innerHTML = `
+          <div class="medallion-circle">
+            <img src="${sprSrc}" alt="${anim.name}" class="w-8 h-8 sm:w-10 sm:h-10 object-contain drop-shadow-[0_2px_3px_rgba(0,0,0,0.6)]" />
+          </div>
+          <div class="medallion-ribbon">${anim.cost} 🪙</div>
+        `;
+        btn.addEventListener('click', () => spawnAnimalInPond(anim.id, true));
+        container.appendChild(btn);
+      });
+    }
+
+    function updateDirectPierUpgradeButtons() {
+      const boatLv = getUpgradeLevel('boatLevel');
+      const shedLv = getUpgradeLevel('warehouseLevel');
+      const heliLv = getUpgradeLevel('heliLevel');
+
+      const boatBadge = document.getElementById('boatLevelBadge');
+      if (boatBadge) boatBadge.textContent = `Lv.${boatLv}`;
+      const shedLabel = document.getElementById('warehouseTitleLabel');
+      if (shedLabel) shedLabel.textContent = `Pier Shed Lv.${shedLv}`;
+      const heliBadge = document.getElementById('heliLevelBadge');
+      if (heliBadge) heliBadge.textContent = `Lv.${heliLv}`;
+
+      const btnBoatUpg = document.getElementById('btnQuickUpgBoat');
+      if (btnBoatUpg) {
+        if (boatLv >= 5) {
+          btnBoatUpg.textContent = '✅ Boat MAX (Lv.5)';
+          btnBoatUpg.disabled = true;
+        } else {
+          const cost = UPGRADE_DEFS.boatLevel.coinCosts[boatLv];
+          btnBoatUpg.textContent = `⬆️ Boat Lv.${boatLv + 1} (${cost} 🪙)`;
+          btnBoatUpg.disabled = gameState.coins < cost;
+        }
+      }
+
+      const btnShedUpg = document.getElementById('btnQuickUpgWarehouse');
+      if (btnShedUpg) {
+        if (shedLv >= 5) {
+          btnShedUpg.textContent = '✅ Shed MAX (Lv.5)';
+          btnShedUpg.disabled = true;
+        } else {
+          const cost = UPGRADE_DEFS.warehouseLevel.coinCosts[shedLv];
+          btnShedUpg.textContent = `⬆️ Shed Lv.${shedLv + 1} (${cost} 🪙)`;
+          btnShedUpg.disabled = gameState.coins < cost;
+        }
+      }
+
+      const btnHeliUpg = document.getElementById('btnQuickUpgHeli');
+      if (btnHeliUpg) {
+        if (heliLv >= 5) {
+          btnHeliUpg.textContent = '✅ Heli MAX (Lv.5)';
+          btnHeliUpg.disabled = true;
+        } else {
+          const cost = UPGRADE_DEFS.heliLevel.coinCosts[heliLv];
+          btnHeliUpg.textContent = `⬆️ Heli Lv.${heliLv + 1} (${cost} 🪙)`;
+          btnHeliUpg.disabled = gameState.coins < cost;
+        }
+      }
+    }
+
+    function updatePondHud() {
+      if (gameState.screen !== 'pond') return;
+
+      document.getElementById('hudCoins').textContent = gameState.coins.toLocaleString('en-US').replace(/,/g, ' ');
+      updateFrenzyButtonUI();
+
+      const animalBtns = document.querySelectorAll('#animalBuyBar button');
+      animalBtns.forEach(btn => {
+        const aId = btn.dataset.animalId;
+        const cost = ANIMALS_DATA[aId]?.cost || 0;
+        const disabled = gameState.coins < cost;
+        btn.disabled = disabled;
+        btn.classList.toggle('disabled', disabled);
+      });
+
+      const used = getWarehouseUsed();
+      const cap = getWarehouseCapacity();
+      document.getElementById('warehouseCount').textContent = `${used}/${cap}`;
+      const fillEl = document.getElementById('warehouseCapFill');
+      if (fillEl) {
+        const pct = Math.min(100, Math.round((used / Math.max(1, cap)) * 100));
+        fillEl.style.width = `${pct}%`;
+      }
+
+      const wList = document.getElementById('warehouseItemsList');
+      wList.innerHTML = '';
+      const entries = Object.entries(gameState.warehouse).filter(([, q]) => q > 0);
+      if (entries.length === 0) {
+        wList.innerHTML = '<span class="text-[#e6c88a] text-[10px] sm:text-xs font-semibold italic mx-auto">Empty Shed — Collect Drops!</span>';
+      } else {
+        entries.forEach(([k, q]) => {
+          const item = ITEMS_DATA[k];
+          if (!item) return;
+          const badge = document.createElement('div');
+          badge.className = 'flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-md bg-[#fff8dc] border border-[#8c5d25] text-[#2c1804] text-[10px] sm:text-xs font-extrabold whitespace-nowrap shadow-xs';
+          if (item.spriteKey && SPRITE_URLS[item.spriteKey]) {
+            badge.innerHTML = `<img src="${SPRITE_URLS[item.spriteKey]}" class="w-3.5 h-3.5 sm:w-4 sm:h-4 object-contain" alt="${item.name}"/><span>x${q}</span>`;
+          } else {
+            badge.textContent = `${item.emoji} x${q}`;
+          }
+          badge.title = `${item.name} ($${item.price} each)`;
+          wList.appendChild(badge);
+        });
+      }
+
+      updateDirectPierUpgradeButtons();
+
+      const goalsEl = document.getElementById('hudGoalsList');
+      goalsEl.innerHTML = '';
+      for (const [k, target] of Object.entries(gameState.currentGoals || {})) {
+        const cur = getGoalCurrentValue(k);
+        const done = cur >= target;
+        let iconHtml = '<span class="text-xs sm:text-sm">🪙</span>';
+        let label = 'Coins';
+
+        if (k !== 'coins') {
+          if (ANIMALS_DATA[k] && SPRITE_URLS[ANIMALS_DATA[k].spriteKey]) {
+            iconHtml = `<img src="${SPRITE_URLS[ANIMALS_DATA[k].spriteKey]}" class="w-4 h-4 sm:w-5 sm:h-5 object-contain" alt="${ANIMALS_DATA[k].name}" />`;
+            label = ANIMALS_DATA[k].name;
+          } else if (ITEMS_DATA[k]?.spriteKey && SPRITE_URLS[ITEMS_DATA[k].spriteKey]) {
+            iconHtml = `<img src="${SPRITE_URLS[ITEMS_DATA[k].spriteKey]}" class="w-4 h-4 sm:w-5 sm:h-5 object-contain" alt="${ITEMS_DATA[k].name}" />`;
+            label = ITEMS_DATA[k].name;
+          } else {
+            const em = ITEMS_DATA[k]?.emoji || ANIMALS_DATA[k]?.emoji || '📦';
+            iconHtml = `<span class="text-xs sm:text-sm">${em}</span>`;
+            label = ITEMS_DATA[k]?.name || ANIMALS_DATA[k]?.name || k;
+          }
+        }
+
+        const div = document.createElement('div');
+        div.className = `flex items-center justify-between gap-1 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-lg border ${done ? 'bg-[#dcfce7] border-[#22c55e] text-[#14532d]' : 'bg-[#fffdf7] border-[#c9a96e] text-[#2c1804]'}`;
+        div.title = `${label}: ${cur} / ${target}`;
+        div.innerHTML = `
+          <div class="flex items-center gap-1">
+            ${iconHtml}
+            <span class="text-[10px] sm:text-xs font-extrabold">${cur}/${target}</span>
+          </div>
+          ${done ? '<span class="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-green-600 text-white text-[9px] sm:text-[10px] font-black flex items-center justify-center">✓</span>' : ''}
+        `;
+        goalsEl.appendChild(div);
+      }
+
+      document.getElementById('hudGoldTarget').textContent = formatTime(gameState.goldTargetTime);
+    }
+
+    function updateRealtimeCounters() {
+      if (gameState.screen !== 'pond') return;
+      document.getElementById('hudTimer').textContent = formatTime(gameState.elapsedTime);
+
+      const boatTxt = document.getElementById('boatStatusText');
+      const boatBadge = document.getElementById('boatSailBadge');
+      const boatProgWrap = document.getElementById('boatProgressWrap');
+      const boatProgBar = document.getElementById('boatProgressBar');
+      if (gameState.boat.active) {
+        boatTxt.textContent = `${Math.ceil(gameState.boat.timer)}s (+$${gameState.boat.pendingCoins})`;
+        if (boatBadge) boatBadge.classList.remove('hidden');
+        if (boatProgWrap && boatProgBar) {
+          boatProgWrap.classList.remove('hidden');
+          const pct = Math.min(100, Math.max(0, Math.round(((gameState.boat.duration - gameState.boat.timer) / Math.max(0.1, gameState.boat.duration)) * 100)));
+          boatProgBar.style.width = `${pct}%`;
+        }
+      } else {
+        boatTxt.textContent = 'Boat: Ready (Sell)';
+        if (boatBadge) boatBadge.classList.add('hidden');
+        if (boatProgWrap) boatProgWrap.classList.add('hidden');
+      }
+
+      const heliTxt = document.getElementById('heliStatusText');
+      const heliBadge = document.getElementById('heliFlyBadge');
+      const heliProgWrap = document.getElementById('heliProgressWrap');
+      const heliProgBar = document.getElementById('heliProgressBar');
+      if (gameState.heli.active) {
+        heliTxt.textContent = `Flying (${Math.ceil(gameState.heli.timer)}s)`;
+        if (heliBadge) heliBadge.classList.remove('hidden');
+        if (heliProgWrap && heliProgBar) {
+          heliProgWrap.classList.remove('hidden');
+          const pct = Math.min(100, Math.max(0, Math.round(((gameState.heli.duration - gameState.heli.timer) / Math.max(0.1, gameState.heli.duration)) * 100)));
+          heliProgBar.style.width = `${pct}%`;
+        }
+      } else {
+        heliTxt.textContent = 'Helicopter: Import';
+        if (heliBadge) heliBadge.classList.add('hidden');
+        if (heliProgWrap) heliProgWrap.classList.add('hidden');
+      }
+    }
+
+    // --- 13. MODAL DIALOGS ---
+    function showModal(title, htmlContent) {
+      gameState.paused = true;
+      document.getElementById('modalTitle').textContent = title;
+      document.getElementById('modalBody').innerHTML = htmlContent;
+      document.getElementById('modalOverlay').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.add('hidden');
+      if (!gameState.levelCompleteTriggered) {
+        gameState.paused = false;
+      }
+      updatePondHud();
+    }
+
+    // A. Speedboat Market & Upgrade Modal
+    function openBoatMarketModal() {
+      const boatLv = getUpgradeLevel('boatLevel');
+      const shedLv = getUpgradeLevel('warehouseLevel');
+      const bonusMult = getBoatSaleBonusMult();
+      const bonusPct = Math.round((bonusMult - 1) * 100);
+
+      const boatCoinCost = boatLv < 5 ? UPGRADE_DEFS.boatLevel.coinCosts[boatLv] : 0;
+      const boatStarCost = boatLv < 5 ? UPGRADE_DEFS.boatLevel.starCosts[boatLv] : 0;
+      const shedCoinCost = shedLv < 5 ? UPGRADE_DEFS.warehouseLevel.coinCosts[shedLv] : 0;
+
+      const warehouseEntries = Object.entries(gameState.warehouse).filter(([, q]) => q > 0);
+      let totalWarehouseValue = 0;
+      warehouseEntries.forEach(([k, q]) => {
+        const unitPrice = Math.round((ITEMS_DATA[k]?.price || 0) * bonusMult);
+        totalWarehouseValue += unitPrice * q;
+      });
+
+      const activeTransitBanner = gameState.boat.active ? `
+        <div class="flex flex-wrap items-center justify-between gap-2 p-3 rounded-xl bg-emerald-900/90 border-2 border-yellow-300 text-white">
+          <div class="text-xs sm:text-sm font-extrabold">
+            🚤 Speedboat is currently sailing to the market! Arrives in <b>${Math.ceil(gameState.boat.timer)}s</b> with <b>+$${gameState.boat.pendingCoins}</b>.
+          </div>
+          <button id="btnInstantBoatReturn" ${gameState.coins < 25 ? 'disabled' : ''} class="glossy-amber-btn px-3.5 py-1.5 rounded-lg text-xs font-extrabold">
+            ⚡ Instant Return (25 🪙)
+          </button>
+        </div>
+      ` : '';
+
+      const upgradeBannerHtml = `
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 bg-[#f7e7c4] p-3 rounded-xl border-2 border-[#8c5d25]">
+          <div class="flex flex-col justify-between gap-1.5 p-2.5 rounded-lg bg-[#ffffff] border border-[#b5894c]">
+            <div>
+              <div class="font-extrabold text-xs sm:text-sm text-[#2c1804]">🚤 Speedboat Engine (Lv.${boatLv}/5)</div>
+              <div class="text-[11px] font-bold text-[#0369a1]">${UPGRADE_DEFS.boatLevel.levels[boatLv - 1]}</div>
+              ${boatLv < 5 ? `<div class="text-[11px] text-[#5c340b]">Next: <b>${UPGRADE_DEFS.boatLevel.levels[boatLv]}</b></div>` : ''}
+            </div>
+            <div class="flex flex-wrap items-center gap-1.5 mt-1">
+              ${boatLv < 5 ? `
+                <button id="btnModalBoatUpgCoin" ${gameState.coins < boatCoinCost ? 'disabled' : ''} class="glossy-green-btn px-2.5 py-1 rounded-lg text-xs font-extrabold">
+                  ⬆️ Upgrade (${boatCoinCost} 🪙)
+                </button>
+                <button id="btnModalBoatUpgStar" ${profile.stars < boatStarCost ? 'disabled' : ''} class="glossy-blue-btn px-2.5 py-1 rounded-lg text-xs font-extrabold">
+                  ⬆️ Use ⭐ ${boatStarCost}
+                </button>
+              ` : `<span class="text-xs font-extrabold text-emerald-700">✅ Max Level Reached!</span>`}
+            </div>
+          </div>
+
+          <div class="flex flex-col justify-between gap-1.5 p-2.5 rounded-lg bg-[#ffffff] border border-[#b5894c]">
+            <div>
+              <div class="font-extrabold text-xs sm:text-sm text-[#2c1804]">📦 Pier Warehouse Shed (Lv.${shedLv}/5)</div>
+              <div class="text-[11px] font-bold text-[#0369a1]">Capacity: ${getWarehouseUsed()} / ${getWarehouseCapacity()} Slots</div>
+              ${shedLv < 5 ? `<div class="text-[11px] text-[#5c340b]">Next: <b>${UPGRADE_DEFS.warehouseLevel.levels[shedLv]}</b></div>` : ''}
+            </div>
+            <div class="flex flex-wrap items-center gap-1.5 mt-1">
+              ${shedLv < 5 ? `
+                <button id="btnModalShedUpgCoin" ${gameState.coins < shedCoinCost ? 'disabled' : ''} class="glossy-green-btn px-2.5 py-1 rounded-lg text-xs font-extrabold">
+                  ⬆️ Upgrade (${shedCoinCost} 🪙)
+                </button>
+              ` : `<span class="text-xs font-extrabold text-emerald-700">✅ Max Level Reached!</span>`}
+            </div>
+          </div>
+        </div>
+      `;
+
+      let rowsHtml = '';
+      if (warehouseEntries.length === 0) {
+        rowsHtml = `<div class="p-4 text-center text-[#6e420f] font-bold bg-[#fffdf7] rounded-xl border border-[#c9a96e]">Your Pier Warehouse is currently empty! Collect Caviar, Pearls, or Caged Bears from the pond first.</div>`;
+      } else {
+        rowsHtml = `<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-2">` +
+          warehouseEntries.map(([k, q]) => {
+            const it = ITEMS_DATA[k];
+            const unitPrice = Math.round(it.price * bonusMult);
+            const val = unitPrice * q;
+            return `
+              <div class="flex items-center justify-between p-2.5 rounded-xl bg-[#ffffff] border-2 border-[#b5894c] shadow-xs">
+                <div class="flex items-center gap-2.5">
+                  <span class="text-2xl">${it.emoji}</span>
+                  <div>
+                    <div class="font-extrabold text-[#2c1804]">${it.name} (x${q})</div>
+                    <div class="text-xs font-semibold text-[#6e420f]">$${unitPrice} each = <b>$${val}</b></div>
+                  </div>
+                </div>
+                <button data-sell-item="${k}" ${gameState.boat.active ? 'disabled' : ''} class="glossy-green-btn px-3 py-1.5 rounded-lg text-xs font-extrabold">
+                  Sell (+$${val})
+                </button>
+              </div>
+            `;
+          }).join('') + `</div>`;
+      }
+
+      const animalCounts = {};
+      gameState.animals.forEach(a => {
+        animalCounts[a.type] = (animalCounts[a.type] || 0) + 1;
+      });
+      const animalRows = Object.entries(animalCounts).map(([type, count]) => {
+        const ad = ANIMALS_DATA[type];
+        const sprSrc = SPRITE_URLS[ad.spriteKey] || '';
+        const sellVal = Math.round(ad.sellPrice * bonusMult);
+        return `
+          <div class="flex items-center justify-between p-2.5 rounded-xl bg-[#fff8dc] border border-[#b5894c]">
+            <div class="flex items-center gap-2">
+              <img src="${sprSrc}" class="w-7 h-7 object-contain" alt="${ad.name}" />
+              <span class="text-xs font-extrabold text-[#2c1804]">${ad.name} in Pond (x${count})</span>
+            </div>
+            <button data-sell-animal="${type}" ${gameState.boat.active ? 'disabled' : ''} class="glossy-blue-btn px-3 py-1 rounded-lg text-xs font-extrabold">
+              Sell 1 (+$${sellVal})
+            </button>
+          </div>
+        `;
+      }).join('');
+
+      const html = `
+        <div class="flex flex-col gap-3">
+          ${activeTransitBanner}
+          ${upgradeBannerHtml}
+          <div class="flex flex-wrap items-center justify-between gap-2 bg-[#e6c88a] p-3 rounded-xl border-2 border-[#8c5d25]">
+            <div class="flex items-center gap-3">
+              <img src="${SPRITE_URLS.boat}" class="w-11 h-11 object-contain" alt="Speedboat" />
+              <div>
+                <div class="font-extrabold text-[#2c1804]">🚤 Market Cargo Manifest (VIP Bonus: +${bonusPct}%)</div>
+                <div class="text-xs font-semibold text-[#5c340b]">Trip Time: <b>${getBoatDuration()}s</b> | Total Cargo Value: <b>$${totalWarehouseValue}</b></div>
+              </div>
+            </div>
+            <button id="btnSellAllWarehouse" ${totalWarehouseValue === 0 || gameState.boat.active ? 'disabled' : ''} class="glossy-green-btn px-4 py-2 rounded-xl text-sm font-extrabold">
+              🚢 Ship Entire Cargo (+$${totalWarehouseValue})
+            </button>
+          </div>
+          ${rowsHtml}
+          ${animalRows ? `<div class="font-extrabold text-xs uppercase tracking-wider text-[#5c340b] mt-1">Sell Live Pond Fish</div><div class="grid grid-cols-1 sm:grid-cols-2 gap-2">${animalRows}</div>` : ''}
+        </div>
+      `;
+
+      showModal('🚤 Speedboat Market & Pier Upgrades', html);
+
+      const modalBody = document.getElementById('modalBody');
+
+      const btnInstant = modalBody.querySelector('#btnInstantBoatReturn');
+      if (btnInstant) {
+        btnInstant.addEventListener('click', () => {
+          if (gameState.coins < 25 || !gameState.boat.active) return;
+          gameState.coins -= 25;
+          gameState.boat.timer = 0.05;
+          updatePondSimulation(0.1);
+          openBoatMarketModal();
+        });
+      }
+
+      const btnBoatCoin = modalBody.querySelector('#btnModalBoatUpgCoin');
+      if (btnBoatCoin) {
+        btnBoatCoin.addEventListener('click', () => {
+          if (performEquipmentUpgrade('boatLevel', 'coins')) openBoatMarketModal();
+        });
+      }
+      const btnBoatStar = modalBody.querySelector('#btnModalBoatUpgStar');
+      if (btnBoatStar) {
+        btnBoatStar.addEventListener('click', () => {
+          if (performEquipmentUpgrade('boatLevel', 'stars')) openBoatMarketModal();
+        });
+      }
+      const btnShedCoin = modalBody.querySelector('#btnModalShedUpgCoin');
+      if (btnShedCoin) {
+        btnShedCoin.addEventListener('click', () => {
+          if (performEquipmentUpgrade('warehouseLevel', 'coins')) openBoatMarketModal();
+        });
+      }
+
+      const btnAll = modalBody.querySelector('#btnSellAllWarehouse');
+      if (btnAll) {
+        btnAll.addEventListener('click', () => {
+          if (totalWarehouseValue <= 0 || gameState.boat.active) return;
+          gameState.warehouse = {};
+          dispatchBoatWithCoins(totalWarehouseValue);
+          closeModal();
+        });
+      }
+
+      modalBody.querySelectorAll('[data-sell-item]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (gameState.boat.active) return;
+          const k = btn.dataset.sellItem;
+          const q = gameState.warehouse[k] || 0;
+          if (q <= 0) return;
+          const unitPrice = Math.round((ITEMS_DATA[k]?.price || 0) * bonusMult);
+          const earned = q * unitPrice;
+          delete gameState.warehouse[k];
+          dispatchBoatWithCoins(earned);
+          closeModal();
+        });
+      });
+
+      modalBody.querySelectorAll('[data-sell-animal]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (gameState.boat.active) return;
+          const type = btn.dataset.sellAnimal;
+          const idx = gameState.animals.findIndex(a => a.type === type);
+          if (idx !== -1) {
+            gameState.animals.splice(idx, 1);
+            const earned = Math.round(ANIMALS_DATA[type].sellPrice * bonusMult);
+            dispatchBoatWithCoins(earned);
+            closeModal();
+          }
+        });
+      });
+    }
+
+    function dispatchBoatWithCoins(coinsEarned) {
+      gameState.boat.active = true;
+      gameState.boat.duration = getBoatDuration();
+      gameState.boat.timer = gameState.boat.duration;
+      gameState.boat.pendingCoins = coinsEarned;
+      sfx.splash();
+      showToast(`🚤 Speedboat departed for the city market! (+$${coinsEarned} in ${gameState.boat.duration}s)`);
+      updatePondHud();
+    }
+
+    // B. Helicopter Import & Upgrade Modal
+    function openHelicopterModal() {
+      const heliLv = getUpgradeLevel('heliLevel');
+      const heliCoinCost = heliLv < 5 ? UPGRADE_DEFS.heliLevel.coinCosts[heliLv] : 0;
+      const heliStarCost = heliLv < 5 ? UPGRADE_DEFS.heliLevel.starCosts[heliLv] : 0;
+      const discPct = Math.round((1 - getHeliCostMult()) * 100);
+
+      const activeFlightBanner = gameState.heli.active ? `
+        <div class="flex flex-wrap items-center justify-between gap-2 p-3 rounded-xl bg-amber-900/90 border-2 border-yellow-300 text-white">
+          <div class="text-xs sm:text-sm font-extrabold">
+            🚁 Helicopter is in flight delivering <b>x${gameState.heli.pendingQty} ${ITEMS_DATA[gameState.heli.pendingItem]?.name || ''}</b>! Lands in <b>${Math.ceil(gameState.heli.timer)}s</b>.
+          </div>
+          <button id="btnInstantHeliLand" ${gameState.coins < 20 ? 'disabled' : ''} class="glossy-green-btn px-3.5 py-1.5 rounded-lg text-xs font-extrabold">
+            ⚡ Instant Delivery (20 🪙)
+          </button>
+        </div>
+      ` : '';
+
+      const upgradeCardHtml = `
+        <div class="flex flex-wrap items-center justify-between gap-2 bg-[#f7e7c4] p-3 rounded-xl border-2 border-[#8c5d25]">
+          <div class="flex items-center gap-3">
+            <img src="${SPRITE_URLS.heli}" class="w-12 h-12 object-contain" alt="Helicopter" />
+            <div>
+              <div class="font-extrabold text-[#2c1804]">🚁 Supply Helicopter Rotor (Lv.${heliLv}/5)</div>
+              <div class="text-xs font-bold text-[#0369a1]">Flight Time: ${getHeliDuration()}s | Bulk Import Discount: -${discPct}%</div>
+              ${heliLv < 5 ? `<div class="text-[11px] font-semibold text-[#5c340b]">Next Level: <b>${UPGRADE_DEFS.heliLevel.levels[heliLv]}</b></div>` : ''}
+            </div>
+          </div>
+          <div class="flex items-center gap-1.5">
+            ${heliLv < 5 ? `
+              <button id="btnModalHeliUpgCoin" ${gameState.coins < heliCoinCost ? 'disabled' : ''} class="glossy-green-btn px-3 py-1.5 rounded-xl text-xs font-extrabold">
+                ⬆️ Upgrade (${heliCoinCost} 🪙)
+              </button>
+              <button id="btnModalHeliUpgStar" ${profile.stars < heliStarCost ? 'disabled' : ''} class="glossy-blue-btn px-3 py-1.5 rounded-xl text-xs font-extrabold">
+                ⬆️ Use ⭐ ${heliStarCost}
+              </button>
+            ` : `<span class="text-xs font-extrabold text-emerald-700">✅ Max Level (Lv.5)</span>`}
+          </div>
+        </div>
+      `;
+
+      const importKeys = ['butter', 'jar', 'sushi_supply', 'gold_bar', 'chemical'];
+      const cardsHtml = importKeys.map(k => {
+        const it = ITEMS_DATA[k];
+        const unitCost = getItemImportCost(k);
+        const cost1 = unitCost;
+        const cost3 = unitCost * 3;
+        const cost5 = unitCost * 5;
+        return `
+          <div class="flex flex-wrap items-center justify-between gap-2 p-2.5 rounded-xl bg-[#ffffff] border-2 border-[#b5894c]">
+            <div class="flex items-center gap-2.5">
+              <span class="text-2xl">${it.emoji}</span>
+              <div>
+                <div class="font-extrabold text-[#2c1804]">${it.name}</div>
+                <div class="text-xs font-semibold text-[#6e420f]">Import Cost: <b>$${cost1}</b> | In Storage: <b>${gameState.warehouse[k] || 0}</b></div>
+              </div>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <button data-import-key="${k}" data-import-qty="1" ${gameState.coins < cost1 || gameState.heli.active ? 'disabled' : ''} class="glossy-blue-btn px-2.5 py-1.5 rounded-lg text-xs font-extrabold">
+                Buy x1 ($${cost1})
+              </button>
+              <button data-import-key="${k}" data-import-qty="3" ${gameState.coins < cost3 || gameState.heli.active ? 'disabled' : ''} class="glossy-amber-btn px-2.5 py-1.5 rounded-lg text-xs font-extrabold">
+                Buy x3 ($${cost3})
+              </button>
+              <button data-import-key="${k}" data-import-qty="5" ${gameState.coins < cost5 || gameState.heli.active ? 'disabled' : ''} class="glossy-green-btn px-2.5 py-1.5 rounded-lg text-xs font-extrabold">
+                Buy x5 ($${cost5})
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const html = `
+        <div class="flex flex-col gap-3">
+          ${activeFlightBanner}
+          ${upgradeCardHtml}
+          <div class="flex flex-col gap-2">
+            ${cardsHtml}
+          </div>
+        </div>
+      `;
+
+      showModal('🚁 Supply Helicopter Dock — Import & Upgrade', html);
+
+      const modalBody = document.getElementById('modalBody');
+      const btnInstant = modalBody.querySelector('#btnInstantHeliLand');
+      if (btnInstant) {
+        btnInstant.addEventListener('click', () => {
+          if (gameState.coins < 20 || !gameState.heli.active) return;
+          gameState.coins -= 20;
+          gameState.heli.timer = 0.05;
+          updatePondSimulation(0.1);
+          openHelicopterModal();
+        });
+      }
+
+      const btnHeliCoin = modalBody.querySelector('#btnModalHeliUpgCoin');
+      if (btnHeliCoin) {
+        btnHeliCoin.addEventListener('click', () => {
+          if (performEquipmentUpgrade('heliLevel', 'coins')) openHelicopterModal();
+        });
+      }
+      const btnHeliStar = modalBody.querySelector('#btnModalHeliUpgStar');
+      if (btnHeliStar) {
+        btnHeliStar.addEventListener('click', () => {
+          if (performEquipmentUpgrade('heliLevel', 'stars')) openHelicopterModal();
+        });
+      }
+
+      modalBody.querySelectorAll('[data-import-key]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (gameState.heli.active) return;
+          const k = btn.dataset.importKey;
+          const q = parseInt(btn.dataset.importQty, 10);
+          const it = ITEMS_DATA[k];
+          const totalCost = getItemImportCost(k) * q;
+          if (gameState.coins < totalCost) return;
+          if (getWarehouseUsed() + q > getWarehouseCapacity()) {
+            showToast('📦 Not enough Pier Warehouse space! Upgrade your Shed first!');
+            return;
+          }
+          gameState.coins -= totalCost;
+          gameState.heli.active = true;
+          gameState.heli.duration = getHeliDuration();
+          gameState.heli.timer = gameState.heli.duration;
+          gameState.heli.pendingItem = k;
+          gameState.heli.pendingQty = q;
+          sfx.splash();
+          closeModal();
+          showToast(`🚁 Helicopter dispatched for x${q} ${it.name}!`);
+        });
+      });
+    }
+
+    // C. Upgrade Shop Modal
+    function openUpgradeShopModal() {
+      const inPond = gameState.screen === 'pond';
+      const rows = Object.values(UPGRADE_DEFS).map(u => {
+        const curLv = getUpgradeLevel(u.key);
+        const isMax = curLv >= 5;
+        const starCost = isMax ? 0 : u.starCosts[curLv];
+        const coinCost = isMax ? 0 : u.coinCosts[curLv];
+        return `
+          <div class="flex flex-wrap items-center justify-between gap-2 p-3 rounded-xl bg-[#ffffff] border-2 border-[#b5894c]">
+            <div class="max-w-md">
+              <div class="font-extrabold text-[#2c1804]">${u.name} <span class="text-xs px-2 py-0.5 rounded bg-amber-300 text-[#2c1804]">Lv.${curLv}/5</span></div>
+              <div class="text-xs font-medium text-[#5c340b]">${u.desc}</div>
+              <div class="text-xs font-extrabold text-[#0369a1] mt-0.5">Current: ${u.levels[curLv - 1]} ${!isMax ? `➔ Next: ${u.levels[curLv]}` : '(MAXED)'}</div>
+            </div>
+            <div class="flex flex-wrap items-center gap-1.5">
+              ${isMax ? `
+                <button disabled class="glossy-green-btn px-4 py-2 rounded-xl text-xs font-extrabold">✅ Max Level</button>
+              ` : `
+                ${inPond ? `
+                  <button data-upg-coin="${u.key}" ${gameState.coins < coinCost ? 'disabled' : ''} class="glossy-amber-btn px-3.5 py-2 rounded-xl text-xs font-extrabold">
+                    ⬆️ ${coinCost} 🪙
+                  </button>
+                ` : ''}
+                <button data-upg-star="${u.key}" ${profile.stars < starCost ? 'disabled' : ''} class="glossy-green-btn px-3.5 py-2 rounded-xl text-xs font-extrabold">
+                  ⬆️ ⭐ ${starCost} Stars
+                </button>
+              `}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const html = `
+        <div class="flex flex-col gap-3">
+          <div class="flex flex-wrap items-center justify-between gap-2 bg-[#e6c88a] p-3.5 rounded-xl border-2 border-[#8c5d25]">
+            <span class="font-extrabold text-[#2c1804] text-xs sm:text-sm">Upgrade your Speedboat, Helicopter, Warehouse & Feeder using ${inPond ? 'Pond Coins (🪙) or ' : ''}Career Stars (⭐)!</span>
+            <div class="flex items-center gap-2">
+              ${inPond ? `<span class="px-3 py-1 rounded-full bg-[#3d2105] text-[#ffef7a] font-extrabold text-xs">🪙 $${gameState.coins}</span>` : ''}
+              <span class="px-3.5 py-1 rounded-full bg-[#0284c7] text-[#fef047] font-extrabold text-xs sm:text-sm">⭐ ${profile.stars} Stars</span>
+            </div>
+          </div>
+          <div class="flex flex-col gap-2.5">${rows}</div>
+        </div>
+      `;
+
+      showModal('🛠️ Captain Marina’s Harbor Equipment Upgrade Shop', html);
+
+      const modalBody = document.getElementById('modalBody');
+      modalBody.querySelectorAll('[data-upg-star]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const key = btn.dataset.upgStar;
+          if (performEquipmentUpgrade(key, 'stars')) openUpgradeShopModal();
+        });
+      });
+      modalBody.querySelectorAll('[data-upg-coin]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const key = btn.dataset.upgCoin;
+          if (performEquipmentUpgrade(key, 'coins')) openUpgradeShopModal();
+        });
+      });
+    }
+
+    // D. Save & Load Checkpoint Manager Modal (100% Client-Side LocalStorage + Cross-Device Code + JSON File)
+    function openSaveLoadModal() {
+      if (gameState.screen === 'pond' && !gameState.levelCompleteTriggered) {
+        saveActiveSession(false);
+      }
+      const snap = getSavedSessionMetadata();
+      const saveCode = exportSaveBundleString();
+      const savedTimeStr = snap && snap.savedAt ? new Date(snap.savedAt).toLocaleTimeString() : 'None';
+      const checkpointDesc = snap
+        ? `<b>${snap.mode === 'endless' ? 'Endless Pond' : `Island ${snap.currentLevelNum}`}</b> • Timer: <b>${formatTime(snap.elapsedTime)}</b> • Coins: <b>$${snap.coins}</b> • Fish: <b>${(snap.animals || []).length}</b> (Saved locally at ${savedTimeStr})`
+        : 'No active mid-level pond checkpoint yet. Start any Island level and your exact pond state is saved automatically in your browser!';
+
+      const html = `
+        <div class="flex flex-col gap-3 text-xs sm:text-sm">
+          <!-- 1. Active Checkpoint Card -->
+          <div class="p-3.5 rounded-xl bg-[#e6c88a] border-2 border-[#8c5d25] flex flex-col gap-2">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <div class="font-extrabold text-base text-[#2c1804]">💾 100% Client-Side Browser Save (Zero External DB)</div>
+                <div class="text-xs font-medium text-[#3d2105]">${checkpointDesc}</div>
+              </div>
+              <div class="flex flex-wrap items-center gap-2">
+                ${gameState.screen === 'pond' ? `
+                  <button id="btnManualSaveNow" class="glossy-green-btn px-3.5 py-1.5 rounded-xl text-xs font-extrabold">
+                    💾 Save Checkpoint Now
+                  </button>
+                ` : ''}
+                <button id="btnResumeCheckpointNow" class="glossy-amber-btn px-3.5 py-1.5 rounded-xl text-xs font-extrabold">
+                  ▶️ ${snap ? 'Resume Saved Checkpoint' : `Play Island ${profile.unlockedLevel || 1}`}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Cross-Device Save Code (Copy / Paste between PC, iPad, and Mobile) -->
+          <div class="p-3.5 rounded-xl bg-[#ffffff] border-2 border-[#b5894c] flex flex-col gap-2">
+            <div class="font-extrabold text-[#2c1804]">📱 Cross-Device Save Code (Move Progress Between Laptop, iPad & Mobile)</div>
+            <p class="text-xs text-[#5c340b]">All save data lives inside your browser's <code>localStorage</code> with zero database or tracking. Copy this portable string to continue on another device:</p>
+            <div class="flex items-center gap-2">
+              <input id="saveCodeOutput" type="text" readonly value="${saveCode}" class="flex-1 px-3 py-1.5 rounded-lg border-2 border-[#8c5a20] bg-[#fff8e7] text-[#2c1804] text-xs font-mono select-all" />
+              <button id="btnCopySaveCode" class="glossy-blue-btn px-3.5 py-1.5 rounded-xl text-xs font-extrabold whitespace-nowrap">
+                📋 Copy Code
+              </button>
+            </div>
+            <div class="flex items-center gap-2 mt-1">
+              <input id="saveCodeInput" type="text" placeholder="Paste save code from another device here..." class="flex-1 px-3 py-1.5 rounded-lg border-2 border-[#8c5a20] bg-[#ffffff] text-[#2c1804] text-xs font-mono" />
+              <button id="btnLoadSaveCode" class="glossy-green-btn px-3.5 py-1.5 rounded-xl text-xs font-extrabold whitespace-nowrap">
+                📥 Load Code
+              </button>
+            </div>
+          </div>
+
+          <!-- 3. Download / Upload JSON Backup File -->
+          <div class="p-3.5 rounded-xl bg-[#ffffff] border-2 border-[#b5894c] flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <div class="font-extrabold text-[#2c1804]">📂 Offline Backup Save File (.json)</div>
+              <div class="text-xs text-[#5c340b]">Download a permanent JSON save file to your device or restore from a local backup file.</div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button id="btnDownloadSaveJson" class="glossy-blue-btn px-3.5 py-1.5 rounded-xl text-xs font-extrabold">
+                ⬇️ Download .JSON
+              </button>
+              <label class="glossy-amber-btn px-3.5 py-1.5 rounded-xl text-xs font-extrabold cursor-pointer">
+                ⬆️ Upload .JSON
+                <input id="inputUploadSaveJson" type="file" accept=".json,application/json" class="hidden" />
+              </label>
+            </div>
+          </div>
+        </div>
+      `;
+
+      showModal('💾 Client-Side Save & Continue Manager', html);
+
+      const body = document.getElementById('modalBody');
+      const btnSaveNow = body.querySelector('#btnManualSaveNow');
+      if (btnSaveNow) {
+        btnSaveNow.addEventListener('click', () => {
+          saveProfile();
+          saveActiveSession(true);
+          openSaveLoadModal();
+        });
+      }
+
+      const btnResumeNow = body.querySelector('#btnResumeCheckpointNow');
+      if (btnResumeNow) {
+        btnResumeNow.addEventListener('click', () => {
+          closeModal();
+          resumeSavedSession();
+        });
+      }
+
+      const btnCopy = body.querySelector('#btnCopySaveCode');
+      if (btnCopy) {
+        btnCopy.addEventListener('click', () => {
+          const out = body.querySelector('#saveCodeOutput');
+          out.select();
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(out.value);
+          } else {
+            document.execCommand('copy');
+          }
+          sfx.coin();
+          showToast('📋 Portable Save Code copied to clipboard!');
+        });
+      }
+
+      const btnLoad = body.querySelector('#btnLoadSaveCode');
+      if (btnLoad) {
+        btnLoad.addEventListener('click', () => {
+          const val = body.querySelector('#saveCodeInput').value;
+          if (!val) {
+            showToast('Please paste a Save Code first!');
+            return;
+          }
+          if (importSaveBundleString(val)) {
+            sfx.fanfare();
+            closeModal();
+            showToast('✅ Save Code loaded! Click Continue Saved Game to resume!');
+          } else {
+            showToast('❌ Invalid Save Code. Please check and try again.');
+          }
+        });
+      }
+
+      const btnDl = body.querySelector('#btnDownloadSaveJson');
+      if (btnDl) {
+        btnDl.addEventListener('click', () => {
+          const payload = JSON.stringify({
+            magic: 'LAGOON_FRENZY_V2',
+            exportedAt: new Date().toISOString(),
+            profile,
+            session: getSavedSessionMetadata()
+          }, null, 2);
+          const blob = new Blob([payload], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `lagoon_frenzy_save_${Date.now()}.json`;
+          a.click();
+          URL.revokeObjectURL(url);
+          sfx.coin();
+          showToast('⬇️ Downloaded Save File (.json)!');
+        });
+      }
+
+      const fileInp = body.querySelector('#inputUploadSaveJson');
+      if (fileInp) {
+        fileInp.addEventListener('change', (ev) => {
+          const file = ev.target.files?.[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = () => {
+            if (importSaveBundleString(String(reader.result || ''))) {
+              sfx.fanfare();
+              closeModal();
+              showToast('✅ Save File (.json) restored! Click Continue Saved Game!');
+            } else {
+              showToast('❌ Could not parse that JSON save file.');
+            }
+          };
+          reader.readAsText(file);
+        });
+      }
+    }
+
+    // E. Almanac & Production Chain Guide Modal
+    function openGuideModal() {
+      const html = `
+        <div class="flex flex-col gap-3 text-xs sm:text-sm">
+          <div class="p-3.5 rounded-xl bg-[#e6c88a] border-2 border-[#8c5d25]">
+            <h4 class="font-extrabold text-base text-[#2c1804] mb-1">🐟 How to Play Lagoon Frenzy (Mobile, iPad & Laptop)</h4>
+            <p class="font-medium text-[#3d2105]">Tap or click inside the blue lagoon water (or press <b>Feed Pond ($5)</b> / <code>Space</code>) to scatter fish pellets. On <b>iPad, Mobile, or Laptop</b>, <b>swipe across the pond</b> to collect floating Caviar, Pearls, Treasure Chests, and Golden Starfish AND cage swimming Grizzly Bears! When your <b>⚡ Frenzy Meter</b> hits 100%, trigger <b>12s of 2x Golden Fever Frenzy</b>!</p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div class="p-3.5 rounded-xl bg-[#ffffff] border-2 border-[#b5894c]">
+              <div class="font-extrabold text-[#2c1804] mb-1.5">🏭 Shore Factory Recipes</div>
+              <ul class="space-y-1.5 text-xs font-medium text-[#3d2105]">
+                <li>⚙️ <b>Incubator:</b> 🔴 Red Caviar ➔ 🐟 Live Salmon</li>
+                <li>🏭 <b>Refinery:</b> 🔴 Red Caviar ➔ 🥣 Refined Red ($110)</li>
+                <li>🛢️ <b>Salting Plant:</b> 🥣 Refined Red ➔ 🛢️ Salted Barrel ($210)</li>
+                <li>🥪 <b>Bakery:</b> 🛢️ Barrel + 🧈 Butter (🚁) ➔ 🥪 Caviar Sandwich ($380)</li>
+                <li>🏺 <b>Cannery:</b> ⚫ Black Caviar + 🫙 Jar (🚁) ➔ 🏺 Luxury Jar ($890)</li>
+                <li>📿 <b>Jewelry Studio:</b> ⚪ Pearl + 🪙 Gold Bar (🚁) ➔ 📿 Pearl Necklace ($2,400)</li>
+                <li>🍣 <b>Sushi & Relic Kitchen:</b> 🔴 Red Caviar + 🍙 Sushi Rice (🚁) ➔ 🍣 Sushi ($1,850) <i>OR</i> 🧰 Treasure + 🧪 Vial (🚁) ➔ 🎟️ Museum Ticket ($3,600)</li>
+              </ul>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-[#ffffff] border-2 border-[#b5894c]">
+              <div class="font-extrabold text-[#2c1804] mb-1.5">⌨️ Laptop Hotkeys & Open-Source Credits</div>
+              <ul class="space-y-1.5 text-xs font-medium text-[#3d2105]">
+                <li>⌨️ <b>Keys 1–6:</b> Spawn Salmon (1), Sturgeon (2), Clam (3), Shark (4), Seahorse (5), Dolphin (6).</li>
+                <li>⌨️ <b>Space / M / F / S:</b> Feed Pellets (Space), Mackerel (M), Trigger Frenzy (F), Quick-Save (S).</li>
+                <li>⚡ <b>Golden Fever Frenzy:</b> Doubles fish drop speed & grants +$25 bonus gold on every drop!</li>
+                <li>📜 <b>Clean-Room Open Source (MIT):</b> 100% original HTML5 Canvas code, Web Audio synth, and original AI-generated sprites/backdrops with zero external database requirement.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      `;
+      showModal('📖 Captain Marina’s Aquatic Almanac & Credits', html);
+    }
+
+    // F. Awards Trophy Room Modal
+    function openAwardsModal() {
+      const cards = AWARDS_LIST.map(aw => {
+        const earned = !!profile.awards[aw.id];
+        return `
+          <div class="flex items-center gap-3 p-3 rounded-xl border-2 ${earned ? 'bg-[#ffffff] border-[#d97706]' : 'bg-[#e5d5b5]/60 border-[#9e7339] opacity-65'}">
+            <div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl ${earned ? 'bg-amber-300 border-2 border-amber-600' : 'bg-stone-300'}">${aw.icon}</div>
+            <div>
+              <div class="font-extrabold text-[#2c1804]">${aw.title} ${earned ? '🏆' : '🔒'}</div>
+              <div class="text-xs font-medium text-[#5c340b]">${aw.desc}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      showModal('🏆 Royal Aquarium Awards & Trophies', `<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">${cards}</div>`);
+    }
+
+    // G. Options Modal
+    function openOptionsModal() {
+      const html = `
+        <div class="flex flex-col gap-3">
+          <div class="flex items-center justify-between p-3.5 rounded-xl bg-[#ffffff] border-2 border-[#b5894c]">
+            <div>
+              <div class="font-extrabold text-[#2c1804]">💾 Save & Load Progress / Cross-Device Transfer</div>
+              <div class="text-xs font-medium text-[#5c340b]">Save your exact mid-level checkpoint in browser localStorage or copy a Save Code for iPad & Mobile.</div>
+            </div>
+            <button id="btnModalOpenSaveManager" class="glossy-green-btn px-4 py-2 rounded-xl text-xs font-extrabold">
+              💾 Save & Load Manager
+            </button>
+          </div>
+
+          <div class="flex items-center justify-between p-3.5 rounded-xl bg-[#ffffff] border-2 border-[#b5894c]">
+            <div>
+              <div class="font-extrabold text-[#2c1804]">🔊 Synthesized Tropical Audio & Splash Effects</div>
+              <div class="text-xs font-medium text-[#5c340b]">Toggle Web Audio API sound effects and marimba background music.</div>
+            </div>
+            <button id="btnModalToggleAudio" class="glossy-blue-btn px-4 py-2 rounded-xl text-xs font-extrabold">
+              ${sfx.muted ? '🔇 Muted (Click to Enable)' : '🔊 Sound ON'}
+            </button>
+          </div>
+
+          <div class="flex items-center justify-between p-3.5 rounded-xl bg-[#ffffff] border-2 border-[#b5894c]">
+            <div>
+              <div class="font-extrabold text-[#2c1804]">🔓 Unlock All 36 Island Levels (All 6 Acts) + 60 Bonus Stars</div>
+              <div class="text-xs font-medium text-[#5c340b]">Want to jump straight to Sunken Atlantis or Poseidon's Odyssey and test Lv.5 Boat & Helicopter upgrades?</div>
+            </div>
+            <button id="btnUnlockAllSandbox" class="glossy-amber-btn px-4 py-2 rounded-xl text-xs font-extrabold">
+              ⚡ Unlock All 24 & +40 ⭐
+            </button>
+          </div>
+
+          <div class="flex items-center justify-between p-3.5 rounded-xl bg-[#ffffff] border-2 border-[#b5894c]">
+            <div>
+              <div class="font-extrabold text-[#2c1804]">🗑️ Reset Local Browser Save</div>
+              <div class="text-xs font-medium text-[#5c340b]">Reset career stars, upgrades, and unlocked levels back to Level 1.</div>
+            </div>
+            <button id="btnResetProfile" class="glossy-blue-btn px-4 py-2 rounded-xl text-xs font-extrabold">
+              Reset Save
+            </button>
+          </div>
+        </div>
+      `;
+      showModal('⚙️ Game Options & Nostalgia Controls', html);
+
+      const body = document.getElementById('modalBody');
+      body.querySelector('#btnModalOpenSaveManager').addEventListener('click', () => {
+        openSaveLoadModal();
+      });
+      body.querySelector('#btnModalToggleAudio').addEventListener('click', () => {
+        sfx.muted = !sfx.muted;
+        document.getElementById('btnAudioToggle').textContent = sfx.muted ? '🔇' : '🔊';
+        openOptionsModal();
+      });
+      body.querySelector('#btnUnlockAllSandbox').addEventListener('click', () => {
+        profile.unlockedLevel = CAREER_LEVELS.length;
+        profile.stars += 60;
+        sfx.fanfare();
+        saveProfile();
+        showToast(`⚡ All ${CAREER_LEVELS.length} Islands unlocked + 60 Stars added!`);
+        closeModal();
+      });
+      body.querySelector('#btnResetProfile').addEventListener('click', () => {
+        profile = JSON.parse(JSON.stringify(DEFAULT_PROFILE));
+        clearSavedSession();
+        saveProfile();
+        showToast('Save profile reset to Level 1.');
+        closeModal();
+      });
+    }
+
+    // H. Level Complete Modal
+    function openLevelCompleteModal(medal, bonusStars) {
+      const nextLvl = gameState.currentLevelNum + 1;
+      const hasNext = nextLvl <= CAREER_LEVELS.length;
+      const medalIcon = medal === 'Gold' ? '🥇' : (medal === 'Silver' ? '🥈' : '🥉');
+
+      const html = `
+        <div class="flex flex-col items-center text-center gap-3 py-2">
+          <div class="text-5xl">${medalIcon}</div>
+          <h4 class="text-2xl font-extrabold text-[#2c1804]">Island ${gameState.currentLevelNum} Complete — ${medal} Medal!</h4>
+          <p class="text-sm font-medium text-[#5c340b]">Your Time: <b>${formatTime(gameState.elapsedTime)}</b> (Gold Target: ${formatTime(gameState.goldTargetTime)})</p>
+          <div class="px-4 py-2 rounded-full bg-amber-300 border-2 border-amber-600 font-extrabold text-[#2c1804]">
+            ⭐ +${bonusStars} Career Stars Earned! (Total: ⭐ ${profile.stars})
+          </div>
+          <div class="flex flex-wrap items-center justify-center gap-3 mt-2">
+            <button id="btnWinMap" class="glossy-blue-btn px-5 py-2.5 rounded-full text-sm font-extrabold">
+              🗺️ Island Map
+            </button>
+            <button id="btnWinShop" class="glossy-amber-btn px-5 py-2.5 rounded-full text-sm font-extrabold">
+              🛠️ Upgrade Shop
+            </button>
+            ${hasNext ? `<button id="btnWinNext" class="glossy-green-btn px-6 py-2.5 rounded-full text-sm font-extrabold">▶️ Play Island ${nextLvl}</button>` : ''}
+          </div>
+        </div>
+      `;
+
+      showModal('🎉 Pond Victory!', html);
+      const body = document.getElementById('modalBody');
+      body.querySelector('#btnWinMap').addEventListener('click', () => {
+        closeModal();
+        showMapScreen();
+      });
+      body.querySelector('#btnWinShop').addEventListener('click', () => {
+        openUpgradeShopModal();
+      });
+      const nextBtn = body.querySelector('#btnWinNext');
+      if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+          closeModal();
+          startPondLevel(nextLvl, 'career');
+        });
+      }
+    }
+
+    // --- 14. NAVIGATION & MAP RENDERING ---
+    function updateTitleAndMapUI() {
+      document.getElementById('playerNameDisplay').textContent = profile.playerName;
+      document.getElementById('titleProgressSummary').textContent =
+        `Stars Earned: ⭐ ${profile.stars} | Islands Unlocked: ${profile.unlockedLevel} / ${CAREER_LEVELS.length}`;
+      document.getElementById('mapStarCount').textContent = profile.stars;
+      updateContinueButtonsUI();
+
+      const mapGrid = document.getElementById('mapNodesContainer');
+      if (!mapGrid) return;
+      mapGrid.innerHTML = '';
+
+      const actNames = {
+        1: 'Act I: Salmon Cove',
+        2: 'Act II: Pearl Reefs',
+        3: 'Act III: Grizzly Atolls',
+        4: 'Act IV: Royal Masters',
+        5: 'Act V: Sunken Atlantis',
+        6: 'Act VI: Poseidon\'s Odyssey'
+      };
+
+      const savedSnap = getSavedSessionMetadata();
+
+      const filteredLevels = CAREER_LEVELS.filter(lvl =>
+        selectedMapActFilter === 'all' ? true : String(lvl.act) === String(selectedMapActFilter)
+      );
+
+      filteredLevels.forEach(lvl => {
+        const unlocked = lvl.level <= profile.unlockedLevel;
+        const medal = profile.levelMedals[lvl.level];
+        const medalBadge = medal === 'Gold' ? '🥇' : (medal === 'Silver' ? '🥈' : (medal === 'Bronze' ? '🥉' : (unlocked ? '🟢' : '🔒')));
+        const hasCheckpointHere = savedSnap && savedSnap.mode === 'career' && savedSnap.currentLevelNum === lvl.level;
+
+        const goalIcons = Object.keys(lvl.goals).map(k => {
+          if (k === 'coins') return '🪙';
+          return ITEMS_DATA[k]?.emoji || ANIMALS_DATA[k]?.emoji || '📦';
+        }).join(' ');
+
+        const card = document.createElement('div');
+        card.className = `wood-frame rounded-xl p-2.5 flex flex-col justify-between gap-1.5 transition-transform ${unlocked ? 'hover:scale-[1.02] cursor-pointer' : 'opacity-65 cursor-not-allowed'}`;
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="px-2 py-0.5 rounded-full bg-[#3d2105] text-[#ffef7a] text-[11px] font-extrabold">Island ${lvl.level} • ${(actNames[lvl.act] || 'Act').split(':')[0]}</span>
+            <span class="text-base">${hasCheckpointHere ? '💾' : medalBadge}</span>
+          </div>
+          <div>
+            <div class="font-extrabold text-sm text-[#ffffff] leading-snug">${lvl.title}</div>
+            <div class="text-xs font-medium text-[#ffebb3] line-clamp-1">${lvl.subtitle}</div>
+          </div>
+          <div class="flex items-center justify-between pt-1.5 border-t border-[#784614]">
+            <span class="text-xs font-bold text-[#fff8dc]" title="Level Goals">🎯 ${goalIcons}</span>
+            <button class="${unlocked ? 'glossy-green-btn' : 'glossy-blue-btn'} px-3 py-0.5 rounded-full text-xs font-extrabold" ${!unlocked ? 'disabled' : ''}>
+              ${hasCheckpointHere ? 'Resume 💾' : (unlocked ? 'Play' : 'Locked')}
+            </button>
+          </div>
+        `;
+        if (unlocked) {
+          card.addEventListener('click', () => {
+            if (hasCheckpointHere) {
+              resumeSavedSession();
+            } else {
+              startPondLevel(lvl.level, 'career');
+            }
+          });
+        }
+        mapGrid.appendChild(card);
+      });
+    }
+
+    function showTitleScreen() {
+      if (gameState.screen === 'pond' && !gameState.levelCompleteTriggered) {
+        saveActiveSession(false);
+      }
+      gameState.screen = 'title';
+      gameState.paused = true;
+      document.getElementById('screenTitle').classList.remove('hidden');
+      document.getElementById('screenMap').classList.add('hidden');
+      document.getElementById('pondTopHud').classList.add('hidden');
+      document.getElementById('pondBottomHud').classList.add('hidden');
+      updateTitleAndMapUI();
+    }
+
+    function showMapScreen() {
+      if (gameState.screen === 'pond' && !gameState.levelCompleteTriggered) {
+        saveActiveSession(false);
+      }
+      gameState.screen = 'map';
+      gameState.paused = true;
+      document.getElementById('screenTitle').classList.add('hidden');
+      document.getElementById('screenMap').classList.remove('hidden');
+      document.getElementById('pondTopHud').classList.add('hidden');
+      document.getElementById('pondBottomHud').classList.add('hidden');
+      updateTitleAndMapUI();
+    }
+
+    function cycleAmbienceMode() {
+      const order = ['day', 'sunset', 'night'];
+      const cur = profile.ambience || 'day';
+      const next = order[(order.indexOf(cur) + 1) % order.length];
+      profile.ambience = next;
+      const btn = document.getElementById('btnAmbienceToggle');
+      if (btn) {
+        btn.textContent = next === 'day' ? '☀️ Day' : (next === 'sunset' ? '🌅 Sunset' : '🌙 Night');
+      }
+      saveProfile();
+      drawPondScene();
+      showToast(
+        next === 'day'
+          ? '☀️ Sunny Tropical Day Lighting Enabled'
+          : (next === 'sunset' ? '🌅 Golden Sunset Lagoon Reflections Enabled' : '🌙 Bioluminescent Night Lagoon Enabled')
+      );
+    }
+
+    function toggleFullscreenMode() {
+      const root = document.documentElement;
+      if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        if (root.requestFullscreen) root.requestFullscreen().catch(() => {});
+        else if (root.webkitRequestFullscreen) root.webkitRequestFullscreen();
+        showToast('⛶ Entered Fullscreen Mode');
+      } else {
+        if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        showToast('Exited Fullscreen Mode');
+      }
+    }
+
+    // --- 15. RESIZE & MAIN ANIMATION LOOP ---
+    function resizeCanvas() {
+      const wrapper = document.getElementById('canvasWrapper');
+      const canvas = document.getElementById('gameCanvas');
+      if (!wrapper || !canvas) return;
+      canvas.width = Math.max(640, wrapper.clientWidth);
+      canvas.height = Math.max(380, wrapper.clientHeight);
+      if (gameState.screen === 'pond') {
+        drawPondScene();
+      }
+    }
+
+    let lastFrameTime = performance.now();
+    function mainLoop(now) {
+      const dt = Math.min(0.1, (now - lastFrameTime) / 1000);
+      lastFrameTime = now;
+      if (gameState.screen === 'pond') {
+        updatePondSimulation(dt);
+        drawPondScene();
+      }
+      requestAnimationFrame(mainLoop);
+    }
+
+    // --- 16. WIRE UP ALL UI CONTROLS & KEYBOARD SHORTCUTS ---
+    window.addEventListener('load', () => {
+      loadProfile();
+      const ambBtn = document.getElementById('btnAmbienceToggle');
+      if (ambBtn) {
+        const curAmb = profile.ambience || 'day';
+        ambBtn.textContent = curAmb === 'day' ? '☀️ Day' : (curAmb === 'sunset' ? '🌅 Sunset' : '🌙 Night');
+      }
+      updateTitleAndMapUI();
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+      window.addEventListener('orientationchange', () => setTimeout(resizeCanvas, 150));
+      window.addEventListener('beforeunload', () => {
+        if (gameState.screen === 'pond' && !gameState.levelCompleteTriggered) {
+          saveActiveSession(false);
+        }
+      });
+
+      const canvasEl = document.getElementById('gameCanvas');
+      canvasEl.addEventListener('pointerdown', handleCanvasPointerDown);
+      canvasEl.addEventListener('pointermove', handleCanvasPointerMove);
+      window.addEventListener('pointerup', handleCanvasPointerUp);
+      window.addEventListener('pointercancel', handleCanvasPointerUp);
+
+      // Laptop / Desktop Keyboard Shortcuts
+      window.addEventListener('keydown', (e) => {
+        if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
+        if (gameState.screen !== 'pond') return;
+        const keyMap = { '1': 'salmon', '2': 'sturgeon', '3': 'shellfish', '4': 'shark', '5': 'seahorse', '6': 'dolphin' };
+        if (keyMap[e.key]) {
+          spawnAnimalInPond(keyMap[e.key], true);
+        } else if (e.code === 'Space') {
+          e.preventDefault();
+          dropFoodInPond('pellet');
+        } else if (e.key === 'm' || e.key === 'M') {
+          dropFoodInPond('mackerel');
+        } else if (e.key === 'f' || e.key === 'F') {
+          triggerGoldenFrenzy();
+        } else if (e.key === 's' || e.key === 'S') {
+          saveProfile();
+          saveActiveSession(true);
+        }
+      });
+
+      const nameInput = document.getElementById('playerNameInput');
+      const nameDisplay = document.getElementById('playerNameDisplay');
+      document.getElementById('btnChangePlayer').addEventListener('click', () => {
+        if (nameInput.classList.contains('hidden')) {
+          nameInput.value = profile.playerName;
+          nameInput.classList.remove('hidden');
+          nameDisplay.classList.add('hidden');
+          nameInput.focus();
+          document.getElementById('btnChangePlayer').textContent = 'Save Angler Name';
+        } else {
+          const val = nameInput.value.trim();
+          if (val) profile.playerName = val;
+          nameInput.classList.add('hidden');
+          nameDisplay.classList.remove('hidden');
+          document.getElementById('btnChangePlayer').textContent = 'Click here to change player';
+          saveProfile();
+        }
+      });
+
+      document.getElementById('btnContinueSaved').addEventListener('click', resumeSavedSession);
+      document.getElementById('btnStartCareer').addEventListener('click', showMapScreen);
+      document.getElementById('btnStartEndless').addEventListener('click', () => startPondLevel(99, 'endless'));
+      document.getElementById('btnMenuSaveLoad').addEventListener('click', openSaveLoadModal);
+      document.getElementById('btnMenuOptions').addEventListener('click', openOptionsModal);
+      document.getElementById('btnMenuAwards').addEventListener('click', openAwardsModal);
+      document.getElementById('btnMenuCredits').addEventListener('click', openGuideModal);
+      document.getElementById('btnMenuQuickPlay').addEventListener('click', () => startPondLevel(profile.unlockedLevel || 1, 'career'));
+
+      document.getElementById('btnMapContinueSaved').addEventListener('click', resumeSavedSession);
+      document.getElementById('btnMapSaveManager').addEventListener('click', openSaveLoadModal);
+      document.getElementById('btnMapShop').addEventListener('click', openUpgradeShopModal);
+      document.getElementById('btnMapToTitle').addEventListener('click', showTitleScreen);
+      document.getElementById('btnMapEndless').addEventListener('click', () => startPondLevel(99, 'endless'));
+
+      document.querySelectorAll('#mapActFilterBar button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          selectedMapActFilter = btn.dataset.actFilter;
+          document.querySelectorAll('#mapActFilterBar button').forEach(b => {
+            b.className = (b.dataset.actFilter === selectedMapActFilter)
+              ? 'glossy-amber-btn px-2.5 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-extrabold'
+              : 'glossy-blue-btn px-2.5 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-extrabold';
+          });
+          updateTitleAndMapUI();
+        });
+      });
+
+      document.getElementById('btnPelletWell').addEventListener('click', () => dropFoodInPond('pellet'));
+      document.getElementById('btnTriggerFrenzy').addEventListener('click', triggerGoldenFrenzy);
+      document.getElementById('btnDolphinMackerel').addEventListener('click', () => dropFoodInPond('mackerel'));
+      document.getElementById('btnAudioToggle').addEventListener('click', () => {
+        sfx.muted = !sfx.muted;
+        document.getElementById('btnAudioToggle').textContent = sfx.muted ? '🔇' : '🔊';
+        showToast(sfx.muted ? '🔇 Audio Muted' : '🔊 Audio Enabled');
+      });
+      document.getElementById('btnAmbienceToggle').addEventListener('click', cycleAmbienceMode);
+      document.getElementById('btnQuickSavePond').addEventListener('click', () => {
+        saveProfile();
+        saveActiveSession(true);
+        openSaveLoadModal();
+      });
+      document.getElementById('btnFullscreenToggle').addEventListener('click', toggleFullscreenMode);
+      document.getElementById('btnHudUpgrades').addEventListener('click', openUpgradeShopModal);
+      document.getElementById('btnOpenGuide').addEventListener('click', openGuideModal);
+      document.getElementById('btnBackToMap').addEventListener('click', showMapScreen);
+      document.getElementById('btnPondMenu').addEventListener('click', openOptionsModal);
+      document.getElementById('btnPauseGame').addEventListener('click', () => {
+        gameState.paused = !gameState.paused;
+        if (gameState.paused) saveActiveSession(false);
+        document.getElementById('btnPauseGame').textContent = gameState.paused ? '▶️ Resume' : '⏸️ Pause';
+        showToast(gameState.paused ? '⏸️ Game Paused & Checkpoint Saved' : '▶️ Game Resumed');
+      });
+
+      document.getElementById('boatDockWidget').addEventListener('click', openBoatMarketModal);
+      document.getElementById('warehouseBar').addEventListener('click', openBoatMarketModal);
+      document.getElementById('heliDockWidget').addEventListener('click', openHelicopterModal);
+
+      document.getElementById('btnQuickUpgBoat').addEventListener('click', (e) => {
+        e.stopPropagation();
+        performEquipmentUpgrade('boatLevel', 'coins');
+      });
+      document.getElementById('btnQuickUpgWarehouse').addEventListener('click', (e) => {
+        e.stopPropagation();
+        performEquipmentUpgrade('warehouseLevel', 'coins');
+      });
+      document.getElementById('btnQuickUpgHeli').addEventListener('click', (e) => {
+        e.stopPropagation();
+        performEquipmentUpgrade('heliLevel', 'coins');
+      });
+
+      document.getElementById('btnCloseModal').addEventListener('click', closeModal);
+
+      requestAnimationFrame(mainLoop);
+    });
+  </script>
+</body>
+</html>
