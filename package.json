@@ -1,0 +1,20 @@
+{
+  "name": "lagoon-frenzy-gone-fishing",
+  "version": "2.0.0",
+  "description": "Open-source 2000s-style aquatic time-management & tycoon game in pure HTML5 Canvas (36 Islands, Mobile/iPad touch-swipe, 100% client-side LocalStorage save, zero DB).",
+  "license": "MIT",
+  "scripts": {
+    "start": "npx serve .",
+    "dev": "npx serve ."
+  },
+  "keywords": [
+    "html5-game",
+    "canvas-game",
+    "tycoon-game",
+    "time-management-game",
+    "casual-game",
+    "web-audio-api",
+    "localstorage",
+    "zero-backend"
+  ]
+}
